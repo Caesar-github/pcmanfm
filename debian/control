@@ -16,7 +16,8 @@ Package: pcmanfm
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends:
- gvfs-backends, gvfs-fuse, lxde-icon-theme | gnome-icon-theme
+ gvfs-backends, gvfs-fuse,
+ lxde-icon-theme | gnome-icon-theme | oxygen-icon-theme | tango-icon-theme
 Description: extremely fast and lightweight file manager
  PCMan File Manager is a GTK+ based file manager, featuring:
  .
