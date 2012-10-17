@@ -6,7 +6,7 @@ Uploaders:
  Andrew Lee (李健秋) <ajqlee@debian.org>, Daniel Baumann <daniel@debian.org>
 Build-Depends:
  debhelper (>= 9), autoconf, automake, intltool, libdbus-glib-1-dev,
- libfm-dev (>= 0.1.17), libgamin-dev, libgtk2.0-dev, libmenu-cache1-dev,
+ libfm-dev (>= 1.0.1), libgamin-dev, libgtk2.0-dev, libmenu-cache1-dev,
  libstartup-notification0-dev, libtool, pkg-config, python
 Standards-Version: 3.9.3
 Homepage: http://pcmanfm.sourceforge.net/
