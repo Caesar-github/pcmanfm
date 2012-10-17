@@ -5,9 +5,8 @@ Maintainer: Debian LXDE Maintainers <lxde-debian@lists.lxde.org>
 Uploaders:
  Andrew Lee (李健秋) <ajqlee@debian.org>, Daniel Baumann <daniel@debian.org>
 Build-Depends:
- debhelper (>= 9), autoconf, automake, intltool, libdbus-glib-1-dev,
- libfm-dev (>= 1.0.1), libgamin-dev, libgtk2.0-dev, libmenu-cache1-dev,
- libstartup-notification0-dev, libtool, pkg-config, python
+ debhelper (>= 9), autoconf, automake, intltool, pkg-config,
+ libfm-dev (>= 1.0.1), libgtk2.0-dev
 Standards-Version: 3.9.3
 Homepage: http://pcmanfm.sourceforge.net/
 Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/pcmanfm.git
