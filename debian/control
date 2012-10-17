@@ -14,7 +14,7 @@ Vcs-Git: git://git.lxde.org/git/debian/pcmanfm.git
 
 Package: pcmanfm
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libfm-gtk-bin
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends:
  gvfs-backends, gvfs-fuse, lxde-icon-theme | gnome-icon-theme
 Description: extremely fast and lightweight file manager
