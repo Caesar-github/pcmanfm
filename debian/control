@@ -6,7 +6,7 @@ Uploaders:
  Andrew Lee (李健秋) <ajqlee@debian.org>, Daniel Baumann <daniel@debian.org>
 Build-Depends:
  debhelper (>= 9), intltool, pkg-config,
- libfm-dev (>= 1.0.1), libgtk2.0-dev
+ libfm-gtk-dev (>= 1.0.1), libgtk2.0-dev
 Standards-Version: 3.9.3
 Homepage: http://pcmanfm.sourceforge.net/
 Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/pcmanfm.git
