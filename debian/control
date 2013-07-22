@@ -42,6 +42,7 @@ Priority: extra
 Architecture: any
 Depends: ${misc:Depends}, pcmanfm (= ${binary:Version})
 Description: extremely fast and lightweight file manager (debug)
- PCMan File Manager is a GTK+ based file manager.
+ PCMan File Manager is a GTK+ based file manager. It is a primary file
+ manager for the LXDE but can be used in any other desktop environment.
  .
  This package contains the debugging symbols.
