@@ -36,13 +36,7 @@ EXTRA_DIST= \
 
 pcmanfm_CFLAGS = \
 	$(XLIB_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(PANGO_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GIO_CFLAGS) \
-	$(GMODULE_CFLAGS) \
 	$(FM_CFLAGS) \
-	$(MENU_CACHE_CFLAGS) \
 	$(G_CAST_CHECKS) \
 	-Wall \
 	-Werror-implicit-function-declaration \
@@ -50,13 +44,7 @@ pcmanfm_CFLAGS = \
 
 pcmanfm_LDADD = \
 	$(XLIB_LIBS) \
-	$(GTK_LIBS) \
-	$(PANGO_LIBS) \
-	$(GLIB_LIBS) \
-	$(GIO_LIBS) \
-	$(GMODULE_LIBS) \
 	$(FM_LIBS) \
-	$(MENU_CACHE_LIBS) \
 	$(NULL)
 
 noinst_PROGRAMS=xml-purge

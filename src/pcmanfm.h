@@ -27,6 +27,11 @@
 
 G_BEGIN_DECLS
 
+/* The FM_CHECK_VERSION macro is defined in libfm >= 1.0.2 */
+#ifndef FM_CHECK_VERSION
+#  define FM_CHECK_VERSION(...) 0
+#endif
+
 /* After opening any window/dialog/tool, this should be called. */
 void pcmanfm_ref();
 
@@ -41,11 +46,6 @@ char* pcmanfm_get_profile_dir(gboolean create);
 void pcmanfm_save_config(gboolean immediate);
 
 void pcmanfm_open_folder_in_terminal(GtkWindow* parent, FmPath* dir);
-
-#define TEMPL_NAME_FOLDER    NULL
-#define TEMPL_NAME_BLANK     (const char*)-1
-#define TEMPL_NAME_SHORTCUT  (const char*)-2
-void pcmanfm_create_new(GtkWindow* parent, FmPath* cwd, const char* templ);
 
 G_END_DECLS
 

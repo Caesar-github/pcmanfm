@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-12 18:17+0200\n"
+"POT-Creation-Date: 2013-07-20 01:31+0300\n"
 "PO-Revision-Date: 2011-12-27 10:11+0200\n"
 "Last-Translator: mjjzf <mjjzf@syntaktisk.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -19,9 +19,8 @@ msgstr ""
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../data/ui/about.glade.in.h:1
-#, fuzzy
-msgid "Copyright (C) 2009 - 2012"
-msgstr "Copyright (C) 2009 - 2010"
+msgid "Copyright (C) 2009 - 2013"
+msgstr "Copyright (C) 2009 - 2013"
 
 #: ../data/ui/about.glade.in.h:2
 msgid ""
@@ -42,231 +41,231 @@ msgstr ""
 "Dansk-gruppen <dansk@dansk-gruppen.dk>\n"
 "Mere info: http://www.dansk-gruppen.dk"
 
-#: ../data/ui/desktop-pref.glade.h:1 ../src/desktop-ui.c:60
-#: ../data/pcmanfm-desktop-pref.desktop.in.h:1
-msgid "Desktop Preferences"
-msgstr "Skrivebordsindstillinger"
-
-#: ../data/ui/desktop-pref.glade.h:2
+#: ../data/ui/desktop-pref.glade.h:1
 msgid "<b>Background</b>"
 msgstr "<b>Baggrund</b>"
 
-#: ../data/ui/desktop-pref.glade.h:3
-msgid "Wallpaper:"
-msgstr "Baggrundsbillede:"
-
-#: ../data/ui/desktop-pref.glade.h:4
-msgid "Please select an image file"
-msgstr "Vælg venligst en billedfil"
-
-#: ../data/ui/desktop-pref.glade.h:5
-msgid "Use the same wallpaper on all desktops"
-msgstr ""
-
-#: ../data/ui/desktop-pref.glade.h:6
-msgid "Background color:"
-msgstr "Baggrundsfarve:"
-
-#: ../data/ui/desktop-pref.glade.h:7
-msgid "Wallpaper mode:"
-msgstr "Tilstand for baggrundsbillede:"
-
-#: ../data/ui/desktop-pref.glade.h:8
-msgid "<b>Text</b>"
-msgstr "<b>Tekst</b>"
-
-#: ../data/ui/desktop-pref.glade.h:9
-msgid "Font of label text:"
-msgstr "Skrifttype på etikettekst:"
-
-#: ../data/ui/desktop-pref.glade.h:10
-msgid "Color of label text:"
-msgstr "Farve på etikettekst:"
-
-#: ../data/ui/desktop-pref.glade.h:11
-msgid "Color of shadow:"
-msgstr "Skyggefarve:"
-
-#: ../data/ui/desktop-pref.glade.h:12
-msgid "Appearance"
-msgstr "Udseende"
-
-#: ../data/ui/desktop-pref.glade.h:13
+#: ../data/ui/desktop-pref.glade.h:2
 msgid "<b>Show desktop icons</b>"
 msgstr "<b>Vis skrivebordsikoner</b>"
 
-#: ../data/ui/desktop-pref.glade.h:14
-msgid "Show \"My Documents\" icon on desktop"
-msgstr "Vis ikonet »Mine dokumenter« på skrivebordet"
+#: ../data/ui/desktop-pref.glade.h:3
+msgid "<b>Text</b>"
+msgstr "<b>Tekst</b>"
 
-#: ../data/ui/desktop-pref.glade.h:15
-msgid "Show \"My Computer\" icon on desktop"
-msgstr "Vis ikonet »Min computer« på skrivebordet"
-
-#: ../data/ui/desktop-pref.glade.h:16
-msgid "Show \"Trash Bin\" icon on desktop"
-msgstr "Vis ikonet »Skraldespand« på skrivebordet"
-
-#: ../data/ui/desktop-pref.glade.h:17
-msgid "Show icons of volumes on desktop"
-msgstr "Vis ikoner for arkiver på skrivebordet"
-
-#: ../data/ui/desktop-pref.glade.h:18
-msgid "Desktop Icons"
-msgstr "Skrivebordsikoner"
-
-#: ../data/ui/desktop-pref.glade.h:19
-msgid "Show menus provided by window managers when desktop is clicked"
-msgstr "Vis menuer fra vindueshåndteringer når der klikkes på skrivebordet"
-
-#: ../data/ui/desktop-pref.glade.h:20 ../data/ui/pref.glade.h:40
-msgid "Advanced"
+#: ../data/ui/desktop-pref.glade.h:4
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "Avanceret"
 
-# engelsk fejl FI
-#: ../data/ui/desktop-pref.glade.h:21
-msgid "Fill with background color only"
-msgstr "Fyld kun med baggrundsfarve"
+#: ../data/ui/desktop-pref.glade.h:5
+#, fuzzy
+msgid "C_olor of label text:"
+msgstr "Farve på etikettekst:"
 
-#: ../data/ui/desktop-pref.glade.h:22 ../data/ui/pref.glade.h:45
-msgid "Stretch to fill the entire screen"
-msgstr "Stræk så hele skærmen fyldes"
-
-#: ../data/ui/desktop-pref.glade.h:23 ../data/ui/pref.glade.h:46
-msgid "Stretch to fit the screen"
-msgstr "Stræk så der tilpasses til skærmen"
-
-#: ../data/ui/desktop-pref.glade.h:24 ../data/ui/pref.glade.h:47
+#: ../data/ui/desktop-pref.glade.h:6
 msgid "Center on the screen"
 msgstr "Centrer på skærmen"
 
+#: ../data/ui/desktop-pref.glade.h:7
+#, fuzzy
+msgid "Color of _shadow:"
+msgstr "Skyggefarve:"
+
+#: ../data/ui/desktop-pref.glade.h:8 ../src/desktop-ui.c:34
+#: ../data/pcmanfm-desktop-pref.desktop.in.h:2
+msgid "Desktop Preferences"
+msgstr "Skrivebordsindstillinger"
+
+# engelsk fejl FI
+#: ../data/ui/desktop-pref.glade.h:9
+msgid "Fill with background color only"
+msgstr "Fyld kun med baggrundsfarve"
+
+#: ../data/ui/desktop-pref.glade.h:10
+msgid "Please select an image file"
+msgstr "Vælg venligst en billedfil"
+
+#: ../data/ui/desktop-pref.glade.h:11
+#, fuzzy
+msgid "S_how icons of volumes on desktop"
+msgstr "Vis ikoner for arkiver på skrivebordet"
+
+#: ../data/ui/desktop-pref.glade.h:12
+#, fuzzy
+msgid "Show \"_My Computer\" icon on desktop"
+msgstr "Vis ikonet »Min computer« på skrivebordet"
+
+#: ../data/ui/desktop-pref.glade.h:13
+#, fuzzy
+msgid "Show \"_Trash Bin\" icon on desktop"
+msgstr "Vis ikonet »Skraldespand« på skrivebordet"
+
+#: ../data/ui/desktop-pref.glade.h:14
+msgid "Stretch to fill the entire screen"
+msgstr "Stræk så hele skærmen fyldes"
+
+#: ../data/ui/desktop-pref.glade.h:15
+msgid "Stretch to fit the screen"
+msgstr "Stræk så der tilpasses til skærmen"
+
 # tile = arrangere side om side.
-#: ../data/ui/desktop-pref.glade.h:25 ../data/ui/pref.glade.h:48
+#: ../data/ui/desktop-pref.glade.h:16
 msgid "Tile the image to fill the entire screen"
 msgstr "Læg billedet så det fylder hele skærmen"
 
-#: ../data/ui/pref.glade.h:1
-msgid "Opened in Current Tab"
-msgstr "Åbnet i aktuelt faneblad"
+#: ../data/ui/desktop-pref.glade.h:17
+#, fuzzy
+msgid "Wallpaper _mode:"
+msgstr "Tilstand for baggrundsbillede:"
 
-#: ../data/ui/pref.glade.h:2
-msgid "Opened in New Tab"
-msgstr "Åbnet i nyt faneblad"
+#: ../data/ui/desktop-pref.glade.h:18
+#, fuzzy
+msgid "_Appearance"
+msgstr "Udseende"
 
-#: ../data/ui/pref.glade.h:3
-msgid "Opened in New Window"
-msgstr "Åbnet i nyt vindue"
+#: ../data/ui/desktop-pref.glade.h:19
+#, fuzzy
+msgid "_Background color:"
+msgstr "Baggrundsfarve:"
 
-#: ../data/ui/pref.glade.h:4
-msgid "Preferences"
-msgstr "Indstillinger"
+#: ../data/ui/desktop-pref.glade.h:20
+#, fuzzy
+msgid "_Desktop Icons"
+msgstr "Skrivebordsikoner"
 
-#: ../data/ui/pref.glade.h:5
-msgid "<b>Behavior</b>"
-msgstr "<b>Opførsel</b>"
+#: ../data/ui/desktop-pref.glade.h:21
+#, fuzzy
+msgid "_Font of label text:"
+msgstr "Skrifttype på etikettekst:"
 
-#: ../data/ui/pref.glade.h:6
-msgid "Open files with single click"
-msgstr "Åbn filer med et enkelt klik"
+#: ../data/ui/desktop-pref.glade.h:22
+#, fuzzy
+msgid "_Show \"My Documents\" icon on desktop"
+msgstr "Vis ikonet »Mine dokumenter« på skrivebordet"
 
-#: ../data/ui/pref.glade.h:7
-msgid "Confirm before deleting files"
-msgstr "Bekræft før sletning af filer"
+#: ../data/ui/desktop-pref.glade.h:23
+#, fuzzy
+msgid "_Show menus provided by window managers when desktop is clicked"
+msgstr "Vis menuer fra vindueshåndteringer når der klikkes på skrivebordet"
 
-#: ../data/ui/pref.glade.h:8
-msgid "Move deleted files to \"trash bin\" instead of erasing from disk"
+#: ../data/ui/desktop-pref.glade.h:24
+msgid "_Use the same wallpaper on all desktops"
 msgstr ""
-"Flyt slettede filer til »skradespanden« i steden for at slette dem fra "
-"harddisken"
 
-#: ../data/ui/pref.glade.h:9
-msgid "Bookmarks:"
-msgstr "Bogmærker:"
-
-#: ../data/ui/pref.glade.h:10
-msgid "<b>Default View</b>"
-msgstr "<b>Standardvisning</b>"
-
-#: ../data/ui/pref.glade.h:11
-msgid "View Mode:"
-msgstr "Visningstilstand:"
-
-#: ../data/ui/pref.glade.h:12
+#: ../data/ui/desktop-pref.glade.h:25
 #, fuzzy
-msgid "General"
-msgstr "_Generelt"
+msgid "_Wallpaper:"
+msgstr "Baggrundsbillede:"
 
-#: ../data/ui/pref.glade.h:13
-msgid "<b>Icons</b>"
-msgstr "<b>Ikoner</b>"
-
-#: ../data/ui/pref.glade.h:14
-msgid "Size of small icons:"
-msgstr "Størrelse på små ikoner:"
-
-#: ../data/ui/pref.glade.h:15
-msgid "Size of big icons:"
-msgstr "Størrelse på store ikoner:"
-
-#: ../data/ui/pref.glade.h:16
-msgid "Size of thumbnails:"
-msgstr "Størrelse på miniaturebilleder:"
-
-#: ../data/ui/pref.glade.h:17
-msgid "Size of side pane icons:"
-msgstr "Størrelse på ikoner for sidepanel:"
-
-#: ../data/ui/pref.glade.h:18
-msgid "Show thumbnails of files"
-msgstr "Vis miniaturebilleder af filer"
-
-#: ../data/ui/pref.glade.h:19
-msgid "Only show thumbnails for local files"
-msgstr "Vis kun miniaturebilleder for lokale filer"
-
-#: ../data/ui/pref.glade.h:20
-msgid "Do not generate thumbnails for files exceeding this size:"
-msgstr "Opret ikke miniaturebilleder for filer større end denne størrelse:"
-
-#: ../data/ui/pref.glade.h:21
-#, fuzzy
-msgid "Display"
-msgstr "_Skærm"
-
-#: ../data/ui/pref.glade.h:22
+#: ../data/ui/pref.glade.h:1
 msgid "<b>Auto-mount</b>"
 msgstr "<b>Automonter</b>"
 
-#: ../data/ui/pref.glade.h:23
-msgid "Mount mountable volumes automatically on program startup"
-msgstr "Monter automatisk monterbare enheder ved programopstart"
+#: ../data/ui/pref.glade.h:2
+msgid "<b>Behavior</b>"
+msgstr "<b>Opførsel</b>"
 
-#: ../data/ui/pref.glade.h:24
-msgid "Mount removable media automatically when they are inserted"
-msgstr "Monter automatisk eksterne medier når de indsættes"
+#: ../data/ui/pref.glade.h:3
+msgid "<b>Default View</b>"
+msgstr "<b>Standardvisning</b>"
 
-#: ../data/ui/pref.glade.h:25
-msgid "Show available options for removable media when they are inserted"
-msgstr "Vis tilgængelige indstillinger for eksterne medier når de indsættes"
-
-#: ../data/ui/pref.glade.h:26
+#: ../data/ui/pref.glade.h:4
 #, fuzzy
-msgid "Volume Management"
-msgstr "_Arkivhåndtering"
+msgid "<b>Directories Tree</b>"
+msgstr "Foldertræ"
 
-#: ../data/ui/pref.glade.h:27
+#: ../data/ui/pref.glade.h:5
+msgid "<b>Icons</b>"
+msgstr "<b>Ikoner</b>"
+
+#: ../data/ui/pref.glade.h:6
 msgid "<b>Programs</b>"
 msgstr "<b>Programmer</b>"
 
-#: ../data/ui/pref.glade.h:28
-msgid "Terminal emulator:"
-msgstr "Terminalemulator:"
+#: ../data/ui/pref.glade.h:7
+#, fuzzy
+msgid "<b>Show in Places:</b>"
+msgstr "<b>Vis skrivebordsikoner</b>"
 
-#: ../data/ui/pref.glade.h:29
-msgid "Switch user command:"
-msgstr "Kommando for brugerskift:"
+#: ../data/ui/pref.glade.h:8
+msgid "<b>User Interface</b>"
+msgstr "<b>Brugergrænseflade</b>"
 
-#: ../data/ui/pref.glade.h:31
+#: ../data/ui/pref.glade.h:9
+#, fuzzy
+msgid "A_rchiver integration:"
+msgstr "Arkivintegration:"
+
+#: ../data/ui/pref.glade.h:10
+#, fuzzy
+msgid "Al_ways show full file names"
+msgstr "Vis altid fanebladsbjælken"
+
+#: ../data/ui/pref.glade.h:11
+#, fuzzy
+msgid "Al_ways show the tab bar"
+msgstr "Vis altid fanebladsbjælken"
+
+#: ../data/ui/pref.glade.h:12
+#, fuzzy
+msgid "App_lications"
+msgstr "Programmer"
+
+#: ../data/ui/pref.glade.h:13
+msgid "Ask"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:14
+msgid "Auto (move if on the same FS, copy otherwise)"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:15
+#, fuzzy
+msgid "Clos_e tab containing removable medium when it is unmounted"
+msgstr "Vis tilgængelige indstillinger for eksterne medier når de indsættes"
+
+#: ../data/ui/pref.glade.h:16
+#, fuzzy
+msgid "Co_nfirm before deleting files"
+msgstr "Bekræft før sletning af filer"
+
+#: ../data/ui/pref.glade.h:17
+msgid "Compact View"
+msgstr "Kompakt visning"
+
+#: ../data/ui/pref.glade.h:18
+#, fuzzy
+msgid "Confi_rm before moving files into \"trash bi_n\""
+msgstr "Bekræft før sletning af filer"
+
+#: ../data/ui/pref.glade.h:19
+msgid "Copy"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:20
+msgid "Defaul_t drop action:"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:21
+msgid "Delay of auto-selection in single click mode (0 to disable)"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:22
+#, fuzzy
+msgid "Des_ktop Folder"
+msgstr "Skrivebordsmappe"
+
+#: ../data/ui/pref.glade.h:23
+msgid "Detailed List View"
+msgstr "Detaljeret listevisning"
+
+#: ../data/ui/pref.glade.h:24
+#, fuzzy
+msgid "Do _not generate thumbnails for files exceeding this size:"
+msgstr "Opret ikke miniaturebilleder for filer større end denne størrelse:"
+
+#: ../data/ui/pref.glade.h:26
 #, no-c-format
 msgid ""
 "Examples: \"xterm -e %s\" for terminal or \"gksu %s\" for switching user.\n"
@@ -275,321 +274,547 @@ msgstr ""
 "Eksempel: »xterm -e %s« for terminal eller »gksu %s« for brugerskift.\n"
 "%s = kommandolinjen du ønsker at køre med terminal eller su."
 
-#: ../data/ui/pref.glade.h:33
-msgid "Archiver integration:"
-msgstr "Arkivintegration:"
-
-#: ../data/ui/pref.glade.h:34
-msgid "<b>User Interface</b>"
-msgstr "<b>Brugergrænseflade</b>"
-
-#: ../data/ui/pref.glade.h:35
-msgid "Always show the tab bar"
-msgstr "Vis altid fanebladsbjælken"
-
-#: ../data/ui/pref.glade.h:36
-msgid "Hide 'Close tab' buttons"
+#: ../data/ui/pref.glade.h:28
+#, fuzzy
+msgid "Hid_e 'Close tab' buttons"
 msgstr "Skjul knapperne »Luk faneblad«"
 
-#: ../data/ui/pref.glade.h:37
-msgid "Hide side pane buttons"
-msgstr "Skjul knapperne for sidepanel"
-
-#: ../data/ui/pref.glade.h:38
-msgid "Hide folder content border"
+#: ../data/ui/pref.glade.h:29
+#, fuzzy
+msgid "Hide _folder content border"
 msgstr "Skjul mappeindholdskant"
 
-#: ../data/ui/pref.glade.h:39
-msgid "Use SI decimal prefixes instead of IEC binary prefixes"
-msgstr "Brug SI-decimale præfiks i steden for IEC-binære præfiks"
+#: ../data/ui/pref.glade.h:30
+#, fuzzy
+msgid "Hide _side pane buttons"
+msgstr "Skjul knapperne for sidepanel"
 
-#: ../data/ui/pref.glade.h:41
+#: ../data/ui/pref.glade.h:31
+msgid "Hide e_xpander on empty or locked folder"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:32
 msgid "Icon View"
 msgstr "Ikonvisning"
 
+#: ../data/ui/pref.glade.h:33
+msgid ""
+"If checked then use Startup Notify for application if another not stated "
+"explicitly.\n"
+"If unchecked then use Startup Notify only if that is defined for application."
+msgstr ""
+
+#: ../data/ui/pref.glade.h:35
+#, fuzzy
+msgid "Mo_unt removable media automatically when they are inserted"
+msgstr "Monter automatisk eksterne medier når de indsættes"
+
+#: ../data/ui/pref.glade.h:36
+msgid "Move"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:37
+msgid "Opened in Current Tab"
+msgstr "Åbnet i aktuelt faneblad"
+
+#: ../data/ui/pref.glade.h:38
+msgid "Opened in New Tab"
+msgstr "Åbnet i nyt faneblad"
+
+#: ../data/ui/pref.glade.h:39
+msgid "Opened in New Window"
+msgstr "Åbnet i nyt vindue"
+
+#: ../data/ui/pref.glade.h:40
+msgid "Preferences"
+msgstr "Indstillinger"
+
+#: ../data/ui/pref.glade.h:41
+#, fuzzy
+msgid "Size of _big icons:"
+msgstr "Størrelse på store ikoner:"
+
 #: ../data/ui/pref.glade.h:42
-msgid "Compact View"
-msgstr "Kompakt visning"
+#, fuzzy
+msgid "Size of _thumbnails:"
+msgstr "Størrelse på miniaturebilleder:"
 
 #: ../data/ui/pref.glade.h:43
+#, fuzzy
+msgid "Size of side _pane icons:"
+msgstr "Størrelse på ikoner for sidepanel:"
+
+#: ../data/ui/pref.glade.h:44
+#, fuzzy
+msgid "Size of small _icons:"
+msgstr "Størrelse på små ikoner:"
+
+#: ../data/ui/pref.glade.h:45
 msgid "Thumbnail View"
 msgstr "Miniaturebilledvisning"
 
-#: ../data/ui/pref.glade.h:44
-msgid "Detailed List View"
-msgstr "Detaljeret listevisning"
+#: ../data/ui/pref.glade.h:46
+msgid "Treat backup files as _hidden"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:47
+#, fuzzy
+msgid "Us_e SI decimal prefixes instead of IEC binary prefixes"
+msgstr "Brug SI-decimale præfiks i steden for IEC-binære præfiks"
+
+#: ../data/ui/pref.glade.h:48
+#, fuzzy
+msgid "Vie_w Mode:"
+msgstr "Visningstilstand:"
+
+#: ../data/ui/pref.glade.h:49
+msgid "_Advanced"
+msgstr "_Avanceret"
+
+#: ../data/ui/pref.glade.h:50
+#, fuzzy
+msgid "_Bookmarks:"
+msgstr "Bogmærker:"
+
+#: ../data/ui/pref.glade.h:51
+#, fuzzy
+msgid "_Display"
+msgstr "_Skærm"
+
+#: ../data/ui/pref.glade.h:52
+msgid "_Erase files on removable media instead of \"trash bin\" creation"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:53
+#, fuzzy
+msgid "_General"
+msgstr "_Generelt"
+
+#: ../data/ui/pref.glade.h:54
+#, fuzzy
+msgid "_Home Directory"
+msgstr "Foldertræ"
+
+#: ../data/ui/pref.glade.h:55
+msgid "_Layout"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:56
+#, fuzzy
+msgid "_Mount mountable volumes automatically on program startup"
+msgstr "Monter automatisk monterbare enheder ved programopstart"
+
+#: ../data/ui/pref.glade.h:57
+#, fuzzy
+msgid "_Move deleted files to \"trash bin\" instead of erasing from disk"
+msgstr ""
+"Flyt slettede filer til »skradespanden« i steden for at slette dem fra "
+"harddisken"
+
+#: ../data/ui/pref.glade.h:58
+#, fuzzy
+msgid "_Only show thumbnails for local files"
+msgstr "Vis kun miniaturebilleder for lokale filer"
+
+#: ../data/ui/pref.glade.h:59
+#, fuzzy
+msgid "_Open files with single click"
+msgstr "Åbn filer med et enkelt klik"
+
+#: ../data/ui/pref.glade.h:60
+msgid "_Open mounted removable media in new tab instead of new window"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:61
+#, fuzzy
+msgid "_Show available options for removable media when they are inserted"
+msgstr "Vis tilgængelige indstillinger for eksterne medier når de indsættes"
+
+#: ../data/ui/pref.glade.h:62
+#, fuzzy
+msgid "_Show thumbnails of files"
+msgstr "Vis miniaturebilleder af filer"
+
+#: ../data/ui/pref.glade.h:63
+#, fuzzy
+msgid "_Switch user command:"
+msgstr "Kommando for brugerskift:"
+
+#: ../data/ui/pref.glade.h:64
+#, fuzzy
+msgid "_Terminal emulator:"
+msgstr "Terminalemulator:"
+
+#: ../data/ui/pref.glade.h:65
+#, fuzzy
+msgid "_Trash bin"
+msgstr "Skraldespand"
+
+#: ../data/ui/pref.glade.h:66
+msgid "_Unfold tab when files are dragged onto tab button"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:67
+msgid "_Use Application Startup Notify by default"
+msgstr ""
+
+#: ../data/ui/pref.glade.h:68
+#, fuzzy
+msgid "_Volume Management"
+msgstr "_Arkivhåndtering"
 
 #: ../data/ui/autorun.glade.h:1
-msgid "Removable medium is inserted"
-msgstr "Eksternt medie er indsat"
-
-#: ../data/ui/autorun.glade.h:2
 msgid "<b>Removable medium is inserted</b>"
 msgstr "<b>Eksternt medie er indsat</b>"
 
-#: ../data/ui/autorun.glade.h:3
-msgid "Type of medium:"
-msgstr "Medietype:"
-
-#: ../data/ui/autorun.glade.h:4
+#: ../data/ui/autorun.glade.h:2
 msgid "Detecting..."
 msgstr "Søger..."
 
-#: ../data/ui/autorun.glade.h:5
+#: ../data/ui/autorun.glade.h:3
 msgid "Please select the action you want to perform:"
 msgstr "Vælg venligst den handling du ønsker at udføre:"
 
-#: ../src/volume-manager.c:160
+#: ../data/ui/autorun.glade.h:4
+msgid "Removable medium is inserted"
+msgstr "Eksternt medie er indsat"
+
+#: ../data/ui/autorun.glade.h:5
+msgid "Type of medium:"
+msgstr "Medietype:"
+
+#: ../src/volume-manager.c:164
 msgid "Removable Disk"
 msgstr "Ekstern disk"
 
-#: ../src/volume-manager.c:213
+#: ../src/volume-manager.c:217
 msgid "Open in File Manager"
 msgstr "Åbn i filhåndtering"
 
-#: ../src/desktop-ui.c:54
-msgid "_Invert Selection"
-msgstr "_Vend markering"
-
-#: ../src/desktop-ui.c:55 ../src/main-win-ui.c:164
-msgid "_Sort Files"
-msgstr "_Sorter filer"
-
-#. for popup menu
-#: ../src/desktop-ui.c:56 ../src/main-win-ui.c:190
-msgid "Create _New..."
-msgstr "Opret_ny..."
-
-#: ../src/desktop-ui.c:57 ../src/main-win-ui.c:191
-msgid "Folder"
-msgstr "Mappe"
-
-# engelsk fejl FI
-#: ../src/desktop-ui.c:58 ../src/main-win-ui.c:192
-msgid "Blank File"
-msgstr "Tom fil"
-
-#: ../src/desktop-ui.c:59 ../src/main-win-ui.c:193
-msgid "Shortcut"
-msgstr ""
-
-#: ../src/desktop-ui.c:71 ../src/main-win-ui.c:219
-msgid "By _Name"
-msgstr "Efter _navn"
-
-#: ../src/desktop-ui.c:72 ../src/main-win-ui.c:220
-msgid "By _Modification Time"
-msgstr "Efter _ændringstidspunkt"
-
-#: ../src/desktop-ui.c:73 ../src/main-win-ui.c:221
-msgid "By _Size"
-msgstr "Efter _størrelse"
-
-#: ../src/desktop-ui.c:74 ../src/main-win-ui.c:222
-msgid "By File _Type"
-msgstr "Efter _filtype"
-
-#: ../src/desktop-ui.c:90 ../src/main-win-ui.c:245
-msgid "Open in New Tab"
+#: ../src/desktop-ui.c:51
+#, fuzzy
+msgid "Open in New Ta_b"
 msgstr "Åbn i nyt faneblad"
 
-#: ../src/desktop-ui.c:91 ../src/main-win-ui.c:246
-msgid "Open in New Window"
+#: ../src/desktop-ui.c:52 ../src/tab-page.c:51
+#, fuzzy
+msgid "Open in New Win_dow"
 msgstr "Åbn i nyt vindue"
 
-#: ../src/desktop-ui.c:93 ../src/main-win-ui.c:248
-msgid "Open in _Terminal"
+#: ../src/desktop-ui.c:54 ../src/tab-page.c:53
+#, fuzzy
+msgid "Open in Termina_l"
 msgstr "Åbn i _terminal"
 
-#: ../src/desktop-ui.c:109
-msgid "Stick to Current Position"
+#: ../src/desktop-ui.c:70
+#, fuzzy
+msgid "Stic_k to Current Position"
 msgstr "Fasthold aktuel placering"
 
-#: ../src/desktop-ui.c:114
-msgid "Snap to Grid"
+#: ../src/desktop-ui.c:75
+#, fuzzy
+msgid "Snap to _Grid"
 msgstr "Tilpas til gitter"
 
-#: ../src/main-win-ui.c:144
+#: ../src/main-win-ui.c:127
 msgid "_File"
 msgstr "_Fil"
 
-#: ../src/main-win-ui.c:145
+#: ../src/main-win-ui.c:128
 msgid "_New Window"
 msgstr "_Nyt vindue"
 
-#: ../src/main-win-ui.c:146
-msgid "New _Tab"
+#: ../src/main-win-ui.c:129
+#, fuzzy
+msgid "New T_ab"
 msgstr "Ny _faneblad"
 
-#: ../src/main-win-ui.c:147
+#: ../src/main-win-ui.c:129
+msgid "Create new tab for this folder"
+msgstr ""
+
+#: ../src/main-win-ui.c:130
+#, fuzzy
+msgid "C_reate New..."
+msgstr "Opret ny..."
+
+#: ../src/main-win-ui.c:131
 msgid "_Close Tab"
 msgstr "_Luk faneblad"
 
-#: ../src/main-win-ui.c:148
-msgid "Close Window"
+#: ../src/main-win-ui.c:132
+#, fuzzy
+msgid "Close _Window"
 msgstr "Luk vindue"
 
-#: ../src/main-win-ui.c:149
+#: ../src/main-win-ui.c:133
 msgid "_Edit"
 msgstr "_Rediger"
 
-#: ../src/main-win-ui.c:154
-msgid "Rename"
+#: ../src/main-win-ui.c:138
+#, fuzzy
+msgid "_Rename"
 msgstr "Omdøb"
 
-#: ../src/main-win-ui.c:155
-msgid "Create Symlink"
+#: ../src/main-win-ui.c:139
+#, fuzzy
+msgid "Create Symlin_k"
 msgstr "Opret symlink"
 
-#: ../src/main-win-ui.c:156
-msgid "Move To..."
+#: ../src/main-win-ui.c:140
+#, fuzzy
+msgid "_Move To..."
 msgstr "Flyt til..."
 
-#: ../src/main-win-ui.c:157
-msgid "Copy To..."
+#: ../src/main-win-ui.c:141
+#, fuzzy
+msgid "C_opy To..."
 msgstr "Kopier til..."
 
-#: ../src/main-win-ui.c:159
-msgid "Invert Selection"
-msgstr "Vend markering"
+#: ../src/main-win-ui.c:143
+msgid "_Invert Selection"
+msgstr "_Vend markering"
 
-#: ../src/main-win-ui.c:161
+#: ../src/main-win-ui.c:144
+#, fuzzy
+msgid "Prefere_nces"
+msgstr "Indstillinger"
+
+#: ../src/main-win-ui.c:145
 msgid "_View"
 msgstr "_Vis"
 
-#: ../src/main-win-ui.c:162
-msgid "Reload Folder"
+#: ../src/main-win-ui.c:146
+#, fuzzy
+msgid "_Reload Folder"
 msgstr "Genindlæs mappe"
 
-#: ../src/main-win-ui.c:162
+#: ../src/main-win-ui.c:146
 msgid "Reload current folder"
 msgstr "Genindlæs denne mappe"
 
-#: ../src/main-win-ui.c:163
-msgid "Side Pane"
+#: ../src/main-win-ui.c:147
+#, fuzzy
+msgid "Side _Pane"
 msgstr "Sidepanel"
 
-#: ../src/main-win-ui.c:165
+#. other see below: 'ShowHidden' 'ShowStatus' 'Fullscreen' 'IconView'...
+#: ../src/main-win-ui.c:149
+#, fuzzy
+msgid "S_ort Files"
+msgstr "_Sorter filer"
+
+#: ../src/main-win-ui.c:150
 msgid "_Help"
 msgstr "_Hjælp"
 
-#: ../src/main-win-ui.c:167
+#: ../src/main-win-ui.c:152
+msgid "_Keyboard navigation"
+msgstr ""
+
+#: ../src/main-win-ui.c:153
 msgid "_Go"
 msgstr "_Start"
 
-#: ../src/main-win-ui.c:168
+#: ../src/main-win-ui.c:154
+#, fuzzy
+msgid "_Previous Folder"
+msgstr "Forrige mappe"
+
+#: ../src/main-win-ui.c:154
 msgid "Previous Folder"
 msgstr "Forrige mappe"
 
-#: ../src/main-win-ui.c:169
+#: ../src/main-win-ui.c:155
+#, fuzzy
+msgid "_Next Folder"
+msgstr "Næste mappe"
+
+#: ../src/main-win-ui.c:155
 msgid "Next Folder"
 msgstr "Næste mappe"
 
-#: ../src/main-win-ui.c:170
-msgid "Parent Folder"
+#: ../src/main-win-ui.c:156
+#, fuzzy
+msgid "Pa_rent Folder"
 msgstr "Overmappe"
 
-#: ../src/main-win-ui.c:170
+#: ../src/main-win-ui.c:156
 msgid "Go to parent Folder"
 msgstr "Gå til overmappe"
 
-#: ../src/main-win-ui.c:171
+#: ../src/main-win-ui.c:157
+#, fuzzy
+msgid "H_ome Folder"
+msgstr "Hjemmemappe"
+
+#: ../src/main-win-ui.c:157
 msgid "Home Folder"
 msgstr "Hjemmemappe"
 
-#: ../src/main-win-ui.c:172
-msgid "Desktop"
+#: ../src/main-win-ui.c:158
+#, fuzzy
+msgid "_Desktop"
 msgstr "Skrivebord"
 
-#: ../src/main-win-ui.c:172
+#: ../src/main-win-ui.c:158
 msgid "Desktop Folder"
 msgstr "Skrivebordsmappe"
 
-#: ../src/main-win-ui.c:173
-msgid "My Computer"
+#: ../src/main-win-ui.c:159
+#, fuzzy
+msgid "_My Computer"
 msgstr "Min computer"
 
-#: ../src/main-win-ui.c:174
-msgid "Trash Can"
+#: ../src/main-win-ui.c:160
+#, fuzzy
+msgid "_Trash Can"
 msgstr "Skraldespand"
 
-#: ../src/main-win-ui.c:175
-msgid "Network Drives"
+#: ../src/main-win-ui.c:161
+#, fuzzy
+msgid "Net_work Drives"
 msgstr "Netværksdrev"
 
-#: ../src/main-win-ui.c:176
-msgid "Applications"
+#: ../src/main-win-ui.c:162
+#, fuzzy
+msgid "_Applications"
 msgstr "Programmer"
 
-#: ../src/main-win-ui.c:176
+#: ../src/main-win-ui.c:162
 msgid "Installed Applications"
 msgstr "Installerede programmer"
 
-#: ../src/main-win-ui.c:178
+#: ../src/main-win-ui.c:163
+#, fuzzy
+msgid "Open entered folder"
+msgstr "Genindlæs denne mappe"
+
+#: ../src/main-win-ui.c:164
 msgid "_Bookmarks"
 msgstr "_Bogmærker"
 
-#: ../src/main-win-ui.c:179
-msgid "Add To Bookmarks"
+#: ../src/main-win-ui.c:165
+#, fuzzy
+msgid "_Add To Bookmarks"
 msgstr "Tilføj til bogmærker"
 
-#: ../src/main-win-ui.c:180
-msgid "_Tools"
+#: ../src/main-win-ui.c:166
+#, fuzzy
+msgid "Tool_s"
 msgstr "_Værktøjer"
 
-#: ../src/main-win-ui.c:181
+#: ../src/main-win-ui.c:167
 msgid "Open Current Folder in _Terminal"
 msgstr "Åbn aktuel mappe i _terminal"
 
-#: ../src/main-win-ui.c:182
+#: ../src/main-win-ui.c:168
 msgid "Open Current Folder as _Root"
 msgstr "Åbn aktuel mappe som administrator (_root)"
 
-#: ../src/main-win-ui.c:199
-msgid "Show _Hidden"
+#: ../src/main-win-ui.c:170
+#, fuzzy
+msgid "Fin_d Files"
+msgstr "_Sorter filer"
+
+#. for popup menu - these entries exist in FmFolderView popup still
+#: ../src/main-win-ui.c:179
+msgid "Folder"
+msgstr "Mappe"
+
+#: ../src/main-win-ui.c:180
+msgid "Empty File"
+msgstr ""
+
+#: ../src/main-win-ui.c:186
+#, fuzzy
+msgid "Show Hidde_n"
 msgstr "Vis _skjulte"
 
-#: ../src/main-win-ui.c:200
-msgid "Show Side Pane"
+#: ../src/main-win-ui.c:187
+#, fuzzy
+msgid "Sho_w Side Pane"
 msgstr "vis sidepanel"
 
-#: ../src/main-win-ui.c:205
+#: ../src/main-win-ui.c:188
+msgid "Show Status B_ar"
+msgstr ""
+
+#: ../src/main-win-ui.c:189
+msgid "T_win Pane Mode"
+msgstr ""
+
+#: ../src/main-win-ui.c:190
+msgid "Fullscreen _Mode"
+msgstr ""
+
+#: ../src/main-win-ui.c:195
 msgid "_Icon View"
 msgstr "_Ikonvisning"
 
-#: ../src/main-win-ui.c:206
-msgid "_Compact View"
-msgstr "_Kompakt visning"
-
-#: ../src/main-win-ui.c:207
+#: ../src/main-win-ui.c:196
 msgid "_Thumbnail View"
 msgstr "_Miniaturebilledvisning"
 
-#: ../src/main-win-ui.c:208
+#: ../src/main-win-ui.c:197
+msgid "_Compact View"
+msgstr "_Kompakt visning"
+
+#: ../src/main-win-ui.c:198
 msgid "Detailed _List View"
 msgstr "Detaljeret _listevisning"
 
-#: ../src/main-win-ui.c:227
+#: ../src/main-win-ui.c:209
+msgid "By _Name"
+msgstr "Efter _navn"
+
+#: ../src/main-win-ui.c:210
+msgid "By _Modification Time"
+msgstr "Efter _ændringstidspunkt"
+
+#: ../src/main-win-ui.c:211
+msgid "By _Size"
+msgstr "Efter _størrelse"
+
+#: ../src/main-win-ui.c:212
+msgid "By File _Type"
+msgstr "Efter _filtype"
+
+#: ../src/main-win-ui.c:217
 msgid "Places"
 msgstr "Steder"
 
-#: ../src/main-win-ui.c:228
+#: ../src/main-win-ui.c:218
 msgid "Directory Tree"
 msgstr "Foldertræ"
 
-#: ../src/main-win-ui.c:229
+#: ../src/main-win-ui.c:219
 msgid "Remote"
 msgstr "Remote"
 
-#: ../src/main-win.c:545
+#: ../src/main-win.c:544
 msgid "You are in super user mode"
 msgstr "Du er i tilstanden superbruger"
 
-#: ../src/main-win.c:732
+#: ../src/main-win.c:715 ../src/main-win.c:723
+msgid "Keyboard navigation"
+msgstr ""
+
+#: ../src/main-win.c:717
+msgid ""
+"Tab: cycle focus Folder View -> Side Pane -> Tools Bar\n"
+"Shift+Tab: cycle focus Tools Bar -> Side Pane -> Folder View\n"
+"F6: change focus Side pane <-> Folder view\n"
+"F8: focus divider between Side pane and Folder view\n"
+"F10: activate main menu\n"
+"Ctrl+L or Alt+D: jump focus to Path Bar"
+msgstr ""
+
+#: ../src/main-win.c:753
 msgid "Switch user command is not set."
 msgstr "Kommando for brugerskift er ikke angivet."
 
-#: ../src/main-win.c:1139
+#: ../src/main-win.c:1108
 #, c-format
 msgid ""
 "Add following folder to bookmarks:\n"
@@ -600,118 +825,121 @@ msgstr ""
 "»%s«\n"
 "Indtast et navn for det nye bogmærkeelement:"
 
-#: ../src/main-win.c:1143
+#: ../src/main-win.c:1112
 msgid "Add to Bookmarks"
 msgstr "Tilføj til bogmærker"
 
 #. options only acceptable by first pcmanfm instance. These options are not passed through IPC
-#: ../src/pcmanfm.c:73
+#: ../src/pcmanfm.c:75
 msgid "Name of configuration profile"
 msgstr "Navn på konfigurationsprofil"
 
-#: ../src/pcmanfm.c:74
+#: ../src/pcmanfm.c:75
+msgid "PROFILE"
+msgstr ""
+
+#: ../src/pcmanfm.c:76
 msgid "Run PCManFM as a daemon"
 msgstr "Kør PCManFM som dæmon"
 
-#: ../src/pcmanfm.c:75
+#: ../src/pcmanfm.c:77
 msgid "No function. Just to be compatible with nautilus"
 msgstr "Ingen funktion. Kun for at være kompatibel med nautilus"
 
 #. options that are acceptable for every instance of pcmanfm and will be passed through IPC.
-#: ../src/pcmanfm.c:78
+#: ../src/pcmanfm.c:80
 msgid "Launch desktop manager"
 msgstr "Start skrivebordshåndtering"
 
-#: ../src/pcmanfm.c:79
+#: ../src/pcmanfm.c:81
 msgid "Turn off desktop manager if it's running"
 msgstr "Sluk skrivebordshåndtering hvis den er i gang"
 
-#: ../src/pcmanfm.c:80
+#: ../src/pcmanfm.c:82
 msgid "Open desktop preference dialog"
 msgstr "Åbn skrivebordets indstillingsdialog"
 
-#: ../src/pcmanfm.c:81
-msgid "Set desktop wallpaper"
+#: ../src/pcmanfm.c:83
+msgid "Use --desktop option only for one screen"
+msgstr ""
+
+#: ../src/pcmanfm.c:84
+#, fuzzy
+msgid "Set desktop wallpaper from image FILE"
 msgstr "Angiv baggrundsbillede for skrivebord"
 
-#: ../src/pcmanfm.c:81
-msgid "<image file>"
-msgstr "<billedfil>"
+#: ../src/pcmanfm.c:84
+msgid "FILE"
+msgstr ""
 
-#: ../src/pcmanfm.c:82
-msgid "Set mode of desktop wallpaper. <mode>=(color|stretch|fit|center|tile)"
+#. don't translate list of modes in description, please
+#: ../src/pcmanfm.c:86
+#, fuzzy
+msgid "Set mode of desktop wallpaper. MODE=(color|stretch|fit|center|tile)"
 msgstr ""
 "Angiv tilstand på baggrundsbillede. <tilstand>=(color|stretch|fit|center|"
 "tile)"
 
-# skal den her oversættes?
-#: ../src/pcmanfm.c:82
-msgid "<mode>"
-msgstr "<tilstand>"
-
-# page -> pages
-#: ../src/pcmanfm.c:83
-msgid ""
-"Open preference dialog. 'n' is number of the page you want to show (1, 2, "
-"3...)."
-msgstr ""
-"Åbn indstillingsdialog. »n« er antallet af sider du ønsker at vise (1, 2, "
-"3...)."
-
-#. { "new-win", '\0', 'n', G_OPTION_ARG_NONE, &new_win, N_("Open new window"), NULL },
-#. { "find-files", 'f', 0, G_OPTION_ARG_NONE, &find_files, N_("Open Find Files utility"), NULL },
 #: ../src/pcmanfm.c:86
+msgid "MODE"
+msgstr ""
+
+#: ../src/pcmanfm.c:87
+#, fuzzy
+msgid "Open Preferences dialog on the page N"
+msgstr "Åbn skrivebordets indstillingsdialog"
+
+#: ../src/pcmanfm.c:87
+msgid "N"
+msgstr ""
+
+#: ../src/pcmanfm.c:88
+#, fuzzy
+msgid "Open new window"
+msgstr "Åbn i nyt vindue"
+
+#. { "find-files", 'f', 0, G_OPTION_ARG_NONE, &find_files, N_("Open Find Files utility"), NULL },
+#: ../src/pcmanfm.c:90
+msgid "Window role for usage by window manager"
+msgstr ""
+
+#: ../src/pcmanfm.c:90
+msgid "ROLE"
+msgstr ""
+
+#: ../src/pcmanfm.c:91
 msgid "[FILE1, FILE2,...]"
 msgstr "[FIL1, FIL2,...]"
 
-#: ../src/pcmanfm.c:528
+#: ../src/pcmanfm.c:529
 msgid "Terminal emulator is not set."
 msgstr "Terminalemulator er ikke angivet."
 
-#: ../src/pcmanfm.c:580
-msgid "Enter a name for the newly created folder:"
-msgstr "Indtast et navn for den netop oprettede mappe:"
+#: ../src/tab-page.c:50
+#, fuzzy
+msgid "Open in New T_ab"
+msgstr "Åbn i nyt faneblad"
 
-#: ../src/pcmanfm.c:582
-msgid "Enter a name for the newly created file:"
-msgstr "Indtast et navn for den netop oprettede fil:"
-
-#: ../src/pcmanfm.c:583
-msgid "Create New..."
-msgstr "Opret ny..."
-
-#: ../src/pcmanfm.c:583
-msgid "New"
-msgstr "Ny"
-
-#: ../src/pcmanfm.c:674
-msgid "Error, lxshortcut not installed"
-msgstr ""
-
-#: ../src/pcmanfm.c:679
-msgid "Failed to start lxshortcut"
-msgstr ""
-
-#: ../src/tab-page.c:207
+#: ../src/tab-page.c:242
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
 msgstr[0] "%d objekt valgt"
 msgstr[1] "%d objekter valgt"
 
-#: ../src/tab-page.c:301
+#: ../src/tab-page.c:397
 #, c-format
 msgid "Free space: %s (Total: %s)"
 msgstr "Ledig plads: %s (I alt: %s)"
 
-#: ../src/tab-page.c:321
+#: ../src/tab-page.c:417
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d objekt"
 msgstr[1] "%d objekter"
 
-#: ../src/tab-page.c:322
+#: ../src/tab-page.c:418
 #, c-format
 msgid " (%d hidden)"
 msgid_plural " (%d hidden)"
@@ -719,24 +947,55 @@ msgstr[0] " (%d skjult)"
 msgstr[1] " (%d skjulte)"
 
 #: ../data/pcmanfm.desktop.in.h:1
-#, fuzzy
-msgid "File Manager PCManFM"
-msgstr "Filhåndtering"
+msgid "Browse the file system and manage the files"
+msgstr "Gennemse filsystemet og håndter filerne"
 
 #: ../data/pcmanfm.desktop.in.h:2
 msgid "File Manager"
 msgstr "Filhåndtering"
 
 #: ../data/pcmanfm.desktop.in.h:3
-msgid "Browse the file system and manage the files"
-msgstr "Gennemse filsystemet og håndter filerne"
+#, fuzzy
+msgid "File Manager PCManFM"
+msgstr "Filhåndtering"
 
-#: ../data/pcmanfm-desktop-pref.desktop.in.h:2
+#: ../data/pcmanfm-desktop-pref.desktop.in.h:1
 msgid "Change desktop wallpapers and behavior of desktop manager"
 msgstr ""
 
-#~ msgid "_Advanced"
-#~ msgstr "_Avanceret"
+# engelsk fejl FI
+#~ msgid "Blank File"
+#~ msgstr "Tom fil"
+
+#~ msgid "Create _New..."
+#~ msgstr "Opret_ny..."
+
+#~ msgid "Invert Selection"
+#~ msgstr "Vend markering"
+
+#~ msgid "<image file>"
+#~ msgstr "<billedfil>"
+
+# skal den her oversættes?
+#~ msgid "<mode>"
+#~ msgstr "<tilstand>"
+
+# page -> pages
+#~ msgid ""
+#~ "Open preference dialog. 'n' is number of the page you want to show (1, 2, "
+#~ "3...)."
+#~ msgstr ""
+#~ "Åbn indstillingsdialog. »n« er antallet af sider du ønsker at vise (1, 2, "
+#~ "3...)."
+
+#~ msgid "Enter a name for the newly created folder:"
+#~ msgstr "Indtast et navn for den netop oprettede mappe:"
+
+#~ msgid "Enter a name for the newly created file:"
+#~ msgstr "Indtast et navn for den netop oprettede fil:"
+
+#~ msgid "New"
+#~ msgstr "Ny"
 
 #~ msgid "_New"
 #~ msgstr "_Ny"

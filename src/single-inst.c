@@ -19,6 +19,10 @@
  *      MA 02110-1301, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "single-inst.h"
 
 #include <string.h>
@@ -71,8 +75,8 @@ static void pass_args_to_existing_instance(const GOptionEntry* opt_entries, int 
     char* cwd = g_get_current_dir();
     escaped = g_strescape(cwd, NULL);
     fprintf(f, "%s\n", escaped);
-    g_free(escaped);
     g_free(cwd);
+    cwd = escaped;
 
     /* pass screen number */
     fprintf(f, "%d\n", screen_num);
@@ -101,8 +105,14 @@ static void pass_args_to_existing_instance(const GOptionEntry* opt_entries, int 
             break;
         }
         case G_OPTION_ARG_INT:
-            fprintf(f, "--%s\n%d\n", ent->long_name, *(gint*)ent->arg_data);
+        {
+            gint value = *(gint*)ent->arg_data;
+            if(value >= 0)
+            {
+                fprintf(f, "--%s\n%d\n", ent->long_name, value);
+            }
             break;
+        }
         case G_OPTION_ARG_STRING_ARRAY:
         case G_OPTION_ARG_FILENAME_ARRAY:
         {
@@ -114,8 +124,23 @@ static void pass_args_to_existing_instance(const GOptionEntry* opt_entries, int 
                 for(; *strv; ++strv)
                 {
                     char* str = *strv;
-                    if(g_str_has_prefix(str, "--")) /* strings begining with -- */
-                        fprintf(f, "--\n"); /* prepend a -- to it */
+                    /* if not absolute path and not URI then prepend cwd or $HOME */
+                    if(str[0] == '~' && str[1] == '\0') ; /* pass "~" as is */
+                    else if(str[0] == '~' && str[1] == '/')
+                    {
+                        const char *envvar = g_getenv("HOME");
+                        if(envvar)
+                        {
+                            escaped = g_strescape(envvar, NULL);
+                            fprintf(f, "%s", escaped);
+                            g_free(escaped);
+                            str++;
+                        }
+                    }
+                    else if ((escaped = g_uri_parse_scheme(str))) /* a valid URI */
+                        g_free(escaped);
+                    else if(str[0] != '/')
+                        fprintf(f, "%s/", cwd);
                     escaped = g_strescape(str, NULL);
                     fprintf(f, "%s\n", escaped);
                     g_free(escaped);
@@ -127,7 +152,7 @@ static void pass_args_to_existing_instance(const GOptionEntry* opt_entries, int 
             fprintf(f, "--%s\n%lf\n", ent->long_name, *(gdouble*)ent->arg_data);
             break;
         case G_OPTION_ARG_INT64:
-            fprintf(f, "--%s\n%lld\n", ent->long_name, *(gint64*)ent->arg_data);
+            fprintf(f, "--%s\n%lld\n", ent->long_name, (long long int)*(gint64*)ent->arg_data);
             break;
         case G_OPTION_ARG_CALLBACK:
             /* Not supported */
@@ -135,6 +160,7 @@ static void pass_args_to_existing_instance(const GOptionEntry* opt_entries, int 
         }
     }
     fclose(f);
+    g_free(cwd);
 }
 
 /**
@@ -261,14 +287,28 @@ static gboolean on_client_socket_event(GIOChannel* ioc, GIOCondition cond, gpoin
 
     if ( cond & (G_IO_IN|G_IO_PRI) )
     {
-        char *line;
-        gsize term;
+        GString *str = g_string_sized_new(1024);
+        gsize got;
+        gchar ch;
+        GIOStatus status;
 
-        while(g_io_channel_read_line(ioc, &line, NULL, &term, NULL) == G_IO_STATUS_NORMAL)
+        while((status = g_io_channel_read_chars(ioc, &ch, 1, &got, NULL)) == G_IO_STATUS_NORMAL)
         {
-            if(line)
+            if(ch != '\n')
             {
-                line[term] = '\0';
+                if(ch < 0x20) /* zero or control char */
+                {
+                    g_error("client connection: invalid char %#x", (int)ch);
+                    break;
+                }
+                g_string_append_c(str, ch);
+                continue;
+            }
+            if(str->len)
+            {
+                char *line = g_strndup(str->str, str->len);
+
+                g_string_truncate(str, 0);
                 g_debug("line = %s", line);
                 if(!client->cwd)
                     client->cwd = g_strcompress(line);
@@ -286,6 +326,17 @@ static gboolean on_client_socket_event(GIOChannel* ioc, GIOCondition cond, gpoin
                 g_free(line);
             }
         }
+        g_string_free(str, TRUE);
+        switch(status)
+        {
+            case G_IO_STATUS_ERROR:
+                cond |= G_IO_ERR;
+                break;
+            case G_IO_STATUS_EOF:
+                cond |= G_IO_HUP;
+            default:
+                break;
+        }
     }
 
     if(cond & (G_IO_ERR|G_IO_HUP))
@@ -295,8 +346,8 @@ static gboolean on_client_socket_event(GIOChannel* ioc, GIOCondition cond, gpoin
             /* try to parse argv */
             parse_args(client);
         }
-        single_inst_client_free(client);
         clients = g_list_remove(clients, client);
+        single_inst_client_free(client);
         return FALSE;
     }
 

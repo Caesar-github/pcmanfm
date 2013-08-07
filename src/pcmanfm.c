@@ -46,7 +46,7 @@
 #include "single-inst.h"
 
 static int signal_pipe[2] = {-1, -1};
-gboolean daemon_mode = FALSE;
+static gboolean daemon_mode = FALSE;
 static guint save_config_idle = 0;
 
 static char** files_to_open = NULL;
@@ -56,21 +56,23 @@ static gboolean no_desktop = FALSE;
 static gboolean show_desktop = FALSE;
 static gboolean desktop_off = FALSE;
 static gboolean desktop_running = FALSE;
+static gboolean one_screen = FALSE;
 /* static gboolean new_tab = FALSE; */
-static int show_pref = 0;
+static gint show_pref = -1;
 static gboolean desktop_pref = FALSE;
 static char* set_wallpaper = NULL;
 static char* wallpaper_mode = NULL;
-/* static gboolean new_win = FALSE; */
+static gboolean new_win = FALSE;
 static gboolean find_files = FALSE;
 static char* ipc_cwd = NULL;
+static char* window_role = NULL;
 
 static int n_pcmanfm_ref = 0;
 
 static GOptionEntry opt_entries[] =
 {
     /* options only acceptable by first pcmanfm instance. These options are not passed through IPC */
-    { "profile", 'p', 0, G_OPTION_ARG_STRING, &profile, N_("Name of configuration profile"), "<profile name>" },
+    { "profile", 'p', 0, G_OPTION_ARG_STRING, &profile, N_("Name of configuration profile"), N_("PROFILE") },
     { "daemon-mode", 'd', 0, G_OPTION_ARG_NONE, &daemon_mode, N_("Run PCManFM as a daemon"), NULL },
     { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop, N_("No function. Just to be compatible with nautilus"), NULL },
 
@@ -78,18 +80,21 @@ static GOptionEntry opt_entries[] =
     { "desktop", '\0', 0, G_OPTION_ARG_NONE, &show_desktop, N_("Launch desktop manager"), NULL },
     { "desktop-off", '\0', 0, G_OPTION_ARG_NONE, &desktop_off, N_("Turn off desktop manager if it's running"), NULL },
     { "desktop-pref", '\0', 0, G_OPTION_ARG_NONE, &desktop_pref, N_("Open desktop preference dialog"), NULL },
-    { "set-wallpaper", 'w', 0, G_OPTION_ARG_FILENAME, &set_wallpaper, N_("Set desktop wallpaper"), N_("<image file>") },
-    { "wallpaper-mode", '\0', 0, G_OPTION_ARG_STRING, &wallpaper_mode, N_("Set mode of desktop wallpaper. <mode>=(color|stretch|fit|center|tile)"), N_("<mode>") },
-    { "show-pref", '\0', 0, G_OPTION_ARG_INT, &show_pref, N_("Open preference dialog. 'n' is number of the page you want to show (1, 2, 3...)."), "n" },
-    /* { "new-win", '\0', 'n', G_OPTION_ARG_NONE, &new_win, N_("Open new window"), NULL }, */
+    { "one-screen", '\0', 0, G_OPTION_ARG_NONE, &one_screen, N_("Use --desktop option only for one screen"), NULL },
+    { "set-wallpaper", 'w', 0, G_OPTION_ARG_FILENAME, &set_wallpaper, N_("Set desktop wallpaper from image FILE"), N_("FILE") },
+                    /* don't translate list of modes in description, please */
+    { "wallpaper-mode", '\0', 0, G_OPTION_ARG_STRING, &wallpaper_mode, N_("Set mode of desktop wallpaper. MODE=(color|stretch|fit|center|tile)"), N_("MODE") },
+    { "show-pref", '\0', 0, G_OPTION_ARG_INT, &show_pref, N_("Open Preferences dialog on the page N"), N_("N") },
+    { "new-win", 'n', 0, G_OPTION_ARG_NONE, &new_win, N_("Open new window"), NULL },
     /* { "find-files", 'f', 0, G_OPTION_ARG_NONE, &find_files, N_("Open Find Files utility"), NULL }, */
+    { "role", '\0', 0, G_OPTION_ARG_STRING, &window_role, N_("Window role for usage by window manager"), N_("ROLE") },
     {G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &files_to_open, NULL, N_("[FILE1, FILE2,...]")},
     { NULL }
 };
 
 static const char* valid_wallpaper_modes[] = {"color", "stretch", "fit", "center", "tile"};
 
-static gboolean pcmanfm_run();
+static gboolean pcmanfm_run(gint screen_num);
 
 /* it's not safe to call gtk+ functions in unix signal handler
  * since the process is interrupted here and the state of gtk+ is unpredictable. */
@@ -152,7 +157,6 @@ static void single_inst_cb(const char* cwd, int screen_num)
             g_debug("file: %s", file);
             if(scheme) /* a valid URI */
             {
-                /* FIXME: should we canonicalize URIs? and how about file:///? */
                 g_free(scheme);
             }
             else /* a file path */
@@ -162,7 +166,8 @@ static void single_inst_cb(const char* cwd, int screen_num)
             }
         }
     }
-    pcmanfm_run();
+    pcmanfm_run(screen_num);
+    window_role = NULL; /* reset it for clients callbacks */
 }
 
 int main(int argc, char** argv)
@@ -178,7 +183,7 @@ int main(int argc, char** argv)
 #endif
 
     /* initialize GTK+ and parse the command line arguments */
-    if(G_UNLIKELY(!gtk_init_with_args(&argc, &argv, "", opt_entries, GETTEXT_PACKAGE, &err)))
+    if(G_UNLIKELY(!gtk_init_with_args(&argc, &argv, " ", opt_entries, GETTEXT_PACKAGE, &err)))
     {
         g_printf("%s\n", err->message);
         g_error_free(err);
@@ -222,8 +227,9 @@ int main(int argc, char** argv)
 
     fm_gtk_init(config);
     /* the main part */
-    if(pcmanfm_run())
+    if(pcmanfm_run(gdk_screen_get_number(gdk_screen_get_default())))
     {
+        window_role = NULL; /* reset it for clients callbacks */
         fm_volume_manager_init();
         gtk_main();
         /* g_debug("main loop ended"); */
@@ -246,24 +252,9 @@ int main(int argc, char** argv)
     return 0;
 }
 
-static FmJobErrorAction on_file_info_job_error(FmFileInfoJob* job, GError* err, FmJobErrorSeverity severity, gpointer user_data)
+gboolean pcmanfm_run(gint screen_num)
 {
-    if(err->domain == G_IO_ERROR)
-    {
-        if(err->code == G_IO_ERROR_NOT_MOUNTED)
-        {
-            if(fm_mount_path(NULL, fm_file_info_job_get_current(job), TRUE))
-                return FM_JOB_RETRY;
-        }
-        else if(err->code == G_IO_ERROR_FAILED_HANDLED)
-            return FM_JOB_CONTINUE;
-    }
-    fm_show_error(NULL, NULL, err->message);
-    return FM_JOB_CONTINUE;
-}
-
-gboolean pcmanfm_run()
-{
+    FmMainWin *win;
     gboolean ret = TRUE;
 
     if(!files_to_open)
@@ -273,8 +264,9 @@ gboolean pcmanfm_run()
         {
             if(!desktop_running)
             {
-                fm_desktop_manager_init();
+                fm_desktop_manager_init(one_screen ? screen_num : -1);
                 desktop_running = TRUE;
+                one_screen = FALSE;
             }
             show_desktop = FALSE;
             return TRUE;
@@ -292,14 +284,14 @@ gboolean pcmanfm_run()
         else if(show_pref > 0)
         {
             /* FIXME: pass screen number from client */
-            fm_edit_preference(GTK_WINDOW(fm_desktop_get(0)), show_pref - 1);
-            show_pref = 0;
+            fm_edit_preference(GTK_WINDOW(fm_desktop_get(0, 0)), show_pref - 1);
+            show_pref = -1;
             return TRUE;
         }
         else if(desktop_pref)
         {
             /* FIXME: pass screen number from client */
-            fm_desktop_preference(NULL, GTK_WINDOW(fm_desktop_get(0)));
+            fm_desktop_preference(NULL, GTK_WINDOW(fm_desktop_get(0, 0)));
             desktop_pref = FALSE;
             return TRUE;
         }
@@ -316,7 +308,6 @@ gboolean pcmanfm_run()
                     if(app_config->wallpaper)
                         g_free(app_config->wallpaper);
                     app_config->wallpaper = set_wallpaper;
-                    set_wallpaper = NULL;
                     if(! wallpaper_mode) /* if wallpaper mode is not specified */
                     {
                         /* do not use solid color mode; otherwise wallpaper won't be shown. */
@@ -325,6 +316,9 @@ gboolean pcmanfm_run()
                     }
                     wallpaper_changed = TRUE;
                 }
+                else
+                    g_free(set_wallpaper);
+                set_wallpaper = NULL;
             }
 
             if(wallpaper_mode)
@@ -366,9 +360,8 @@ gboolean pcmanfm_run()
         if(files_to_open)
         {
             char** filename;
-            FmFileInfoJob* job = fm_file_info_job_new(NULL, 0);
             FmPath* cwd = NULL;
-            GList* infos;
+            GList* paths = NULL;
             for(filename=files_to_open; *filename; ++filename)
             {
                 FmPath* path;
@@ -379,31 +372,28 @@ gboolean pcmanfm_run()
                 else if( strcmp(*filename, "~") == 0 ) /* special case for home dir */
                 {
                     path = fm_path_get_home();
-                    fm_main_win_add_win(NULL, path);
+                    win = fm_main_win_add_win(NULL, path);
+                    if(new_win && window_role)
+                        gtk_window_set_role(GTK_WINDOW(win), window_role);
                     continue;
                 }
                 else /* basename */
                 {
                     if(G_UNLIKELY(!cwd))
                     {
-                        /* FIXME: This won't work if those filenames are passed via IPC since the receiving process has different cwd. */
-                        /* FIXME: should we use ipc_cwd here? */
                         char* cwd_str = g_get_current_dir();
                         cwd = fm_path_new_for_str(cwd_str);
                         g_free(cwd_str);
                     }
                     path = fm_path_new_relative(cwd, *filename);
                 }
-                fm_file_info_job_add(job, path);
-                fm_path_unref(path);
+                paths = g_list_append(paths, path);
             }
             if(cwd)
                 fm_path_unref(cwd);
-            g_signal_connect(job, "error", G_CALLBACK(on_file_info_job_error), NULL);
-            fm_job_run_sync_with_mainloop(FM_JOB(job));
-            infos = fm_file_info_list_peek_head_link(job->file_infos);
-            fm_launch_files_simple(NULL, NULL, infos, pcmanfm_open_folder, NULL);
-            g_object_unref(job);
+            fm_launch_paths_simple(NULL, NULL, paths, pcmanfm_open_folder, NULL);
+            g_list_foreach(paths, (GFunc)fm_path_unref, NULL);
+            g_list_free(paths);
             ret = (n_pcmanfm_ref >= 1); /* if there is opened window, return true to run the main loop. */
 
             g_strfreev(files_to_open);
@@ -426,7 +416,9 @@ gboolean pcmanfm_run()
                 FmPath* path;
                 char* cwd = ipc_cwd ? ipc_cwd : g_get_current_dir();
                 path = fm_path_new_for_path(cwd);
-                fm_main_win_add_win(NULL, path);
+                win = fm_main_win_add_win(NULL, path);
+                if(new_win && window_role)
+                    gtk_window_set_role(GTK_WINDOW(win), window_role);
                 fm_path_unref(path);
                 g_free(cwd);
                 ipc_cwd = NULL;
@@ -463,13 +455,13 @@ static void move_window_to_desktop(FmMainWin* win, FmDesktop* desktop)
     XClientMessageEvent xev;
 
     gtk_window_set_screen(GTK_WINDOW(win), screen);
-    if(!XInternAtoms(GDK_DISPLAY(), &atom_name, 1, False, &atom))
+    if(!XInternAtoms(gdk_x11_get_default_xdisplay(), &atom_name, 1, False, &atom))
     {
         /* g_debug("cannot get Atom for _NET_WM_DESKTOP"); */
         return;
     }
     xev.type = ClientMessage;
-    xev.window = GDK_WINDOW_XID(GTK_WIDGET(win)->window);
+    xev.window = GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(win)));
     xev.message_type = atom;
     xev.format = 32;
     xev.data.l[0] = desktop->cur_desktop;
@@ -478,7 +470,7 @@ static void move_window_to_desktop(FmMainWin* win, FmDesktop* desktop)
     xev.data.l[3] = 0;
     xev.data.l[4] = 0;
     /* g_debug("moving window to current desktop"); */
-    XSendEvent(GDK_DISPLAY(), GDK_ROOT_WINDOW(), False,
+    XSendEvent(gdk_x11_get_default_xdisplay(), GDK_ROOT_WINDOW(), False,
                (SubstructureNotifyMask | SubstructureRedirectMask),
                (XEvent *) &xev);
 }
@@ -486,6 +478,15 @@ static void move_window_to_desktop(FmMainWin* win, FmDesktop* desktop)
 gboolean pcmanfm_open_folder(GAppLaunchContext* ctx, GList* folder_infos, gpointer user_data, GError** err)
 {
     GList* l = folder_infos;
+    if(new_win)
+    {
+        FmMainWin *win = fm_main_win_add_win(NULL,
+                                fm_file_info_get_path((FmFileInfo*)l->data));
+        if(window_role)
+            gtk_window_set_role(GTK_WINDOW(win), window_role);
+        new_win = FALSE;
+        l = l->next;
+    }
     for(; l; l=l->next)
     {
         FmFileInfo* fi = (FmFileInfo*)l->data;
@@ -565,130 +566,6 @@ void pcmanfm_open_folder_in_terminal(GtkWindow* parent, FmPath* dir)
         g_chdir(old_cwd); /* This is really dirty, but we don't have better solution now. */
         g_free(old_cwd);
     }
-}
-
-/* FIXME: Need to load content of ~/Templates and list available templates in popup menus. */
-void pcmanfm_create_new(GtkWindow* parent, FmPath* cwd, const char* templ)
-{
-    GError* err = NULL;
-    FmPath* dest;
-    char* basename;
-    const char* msg;
-    //FmMainWin* win = FM_MAIN_WIN(parent);
-_retry:
-    if(templ == TEMPL_NAME_FOLDER)
-        msg = N_("Enter a name for the newly created folder:");
-    else
-        msg = N_("Enter a name for the newly created file:");
-    basename = fm_get_user_input(parent, _("Create New..."), _(msg), _("New"));
-    if(!basename)
-        return;
-
-    dest = fm_path_new_child(cwd, basename);
-    g_free(basename);
-
-    if( templ == TEMPL_NAME_FOLDER )
-    {
-        GFile* gf = fm_path_to_gfile(dest);
-        if(!g_file_make_directory(gf, NULL, &err))
-        {
-            if(err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
-            {
-                fm_path_unref(dest);
-                g_error_free(err);
-                g_object_unref(gf);
-                err = NULL;
-                goto _retry;
-            }
-            fm_show_error(parent, NULL, err->message);
-            g_error_free(err);
-        }
-
-        if(!err) /* select the newly created file */
-        {
-            /*FIXME: this doesn't work since the newly created file will
-             * only be shown after file-created event was fired on its
-             * folder's monitor and after FmFolder handles it in idle
-             * handler. So, we cannot select it since it's not yet in
-             * the folder model now. */
-            /* fm_folder_view_select_file_path(fv, dest); */
-        }
-        g_object_unref(gf);
-    }
-    else if( templ == TEMPL_NAME_BLANK )
-    {
-        GFile* gf = fm_path_to_gfile(dest);
-        GFileOutputStream* f = g_file_create(gf, G_FILE_CREATE_NONE, NULL, &err);
-        if(f)
-        {
-            g_output_stream_close(G_OUTPUT_STREAM(f), NULL, NULL);
-            g_object_unref(f);
-        }
-        else
-        {
-            if(err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
-            {
-                fm_path_unref(dest);
-                g_error_free(err);
-                g_object_unref(gf);
-                err = NULL;
-                goto _retry;
-            }
-            fm_show_error(parent, NULL, err->message);
-            g_error_free(err);
-        }
-
-        if(!err) /* select the newly created file */
-        {
-            /*FIXME: this doesn't work since the newly created file will
-             * only be shown after file-created event was fired on its
-             * folder's monitor and after FmFolder handles it in idle
-             * handler. So, we cannot select it since it's not yet in
-             * the folder model now. */
-            /* fm_folder_view_select_file_path(fv, dest); */
-        }
-        g_object_unref(gf);
-    }
-    else if ( templ == TEMPL_NAME_SHORTCUT )
-    {
-        /* FIXME: a temp. workaround until ~/Templates support is implemented */
-         char buf[256];
-         GFile* gf = fm_path_to_gfile(dest);
-
-         if (g_find_program_in_path("lxshortcut"))
-         {
-            char* path = g_file_get_path(gf);
-            int s = snprintf(buf, sizeof(buf), "lxshortcut -i %s", path);
-            g_free(path);
-            if(s >= (int)sizeof(buf))
-                buf[0] = '\0';
-         }
-         else
-         {
-             GtkWidget* msg;
-
-             msg = gtk_message_dialog_new( NULL,
-                                           0,
-                                           GTK_MESSAGE_ERROR,
-                                           GTK_BUTTONS_OK,
-                                           _("Error, lxshortcut not installed") );
-             gtk_dialog_run( GTK_DIALOG(msg) );
-             gtk_widget_destroy( msg );
-         }
-         if(buf[0] && !g_spawn_command_line_async(buf, NULL))
-            fm_show_error(parent, NULL, _("Failed to start lxshortcut"));
-         g_object_unref(gf);
-    }
-    else /* templates in ~/Templates */
-    {
-        /* FIXME: need an extended processing with desktop entries support */
-        FmPath* dir = fm_path_new_for_str(g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES));
-        FmPath* template = fm_path_new_child(dir, templ);
-        fm_copy_file(parent, template, cwd);
-        fm_path_unref(template);
-        fm_path_unref(dir);
-    }
-    fm_path_unref(dest);
 }
 
 char* pcmanfm_get_profile_dir(gboolean create)

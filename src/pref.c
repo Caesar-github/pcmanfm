@@ -205,11 +205,11 @@ static void on_color_set(GtkColorButton* btn, gpointer _off)
 
 static void init_color(GtkBuilder* b, const char* name, gsize off, const char* changed_notify)
 {
-    GtkFontButton* btn = GTK_FONT_BUTTON(gtk_builder_get_object(b, name));
+    GtkColorButton* btn = GTK_COLOR_BUTTON(gtk_builder_get_object(b, name));
     GdkColor* val = (GdkColor*)G_STRUCT_MEMBER_P(fm_config, off);
     if(changed_notify)
         g_object_set_data_full(G_OBJECT(btn), "changed", g_strdup(changed_notify), g_free);
-    gtk_color_button_set_color(GTK_COLOR_BUTTON(btn), val);
+    gtk_color_button_set_color(btn, val);
     g_signal_connect(btn, "color-set", G_CALLBACK(on_color_set), GSIZE_TO_POINTER(off));
 }
 
@@ -256,12 +256,12 @@ static void on_entry_changed(GtkEntry* entry, gpointer _off)
 
 static void init_entry(GtkBuilder* b, const char* name, gsize off, const char* changed_notify)
 {
-    GtkSpinButton* btn = GTK_SPIN_BUTTON(gtk_builder_get_object(b, name));
+    GtkEntry* btn = GTK_ENTRY(gtk_builder_get_object(b, name));
     gchar** val = (gchar**)G_STRUCT_MEMBER_P(fm_config, off);
     if(changed_notify)
         g_object_set_data_full(G_OBJECT(btn), "changed", g_strdup(changed_notify), g_free);
     if(*val)
-        gtk_entry_set_text(GTK_ENTRY(btn), *val);
+        gtk_entry_set_text(btn, *val);
     g_signal_connect(btn, "changed", G_CALLBACK(on_entry_changed), GSIZE_TO_POINTER(off));
 }
 
@@ -274,6 +274,20 @@ static void on_tab_label_list_sel_changed(GtkTreeSelection* tree_sel, gpointer u
     tp = gtk_tree_model_get_path(model, &it);
     gtk_notebook_set_current_page(notebook, gtk_tree_path_get_indices(tp)[0]);
     gtk_tree_path_free(tp);
+}
+
+static void on_notebook_page_changed(GtkNotebook *notebook, gpointer page,
+                                     guint n, GtkTreeSelection* tree_sel)
+{
+    GtkTreeIter it;
+    GtkTreeModel* model;
+    char path_str[8];
+
+    snprintf(path_str, sizeof(path_str), "%u", n);
+    /* g_debug("changed pref page: %u", n); */
+    gtk_tree_selection_get_selected(tree_sel, &model, &it);
+    gtk_tree_model_get_iter_from_string(model, &it, path_str);
+    gtk_tree_selection_select_iter(tree_sel, &it);
 }
 
 void fm_edit_preference( GtkWindow* parent, int page )
@@ -306,6 +320,7 @@ void fm_edit_preference( GtkWindow* parent, int page )
         INIT_BOOL(builder, FmAppConfig, always_show_tabs, NULL);
         INIT_BOOL(builder, FmAppConfig, hide_close_btn, NULL);
         INIT_BOOL(builder, FmConfig, si_unit, NULL);
+        INIT_BOOL(builder, FmConfig, backup_as_hidden, NULL);
 
         INIT_COMBO(builder, FmAppConfig, bm_open_method, NULL);
         INIT_COMBO(builder, FmAppConfig, view_mode, NULL);
@@ -317,6 +332,7 @@ void fm_edit_preference( GtkWindow* parent, int page )
 
         INIT_ENTRY(builder, FmConfig, terminal, NULL);
         INIT_ENTRY(builder, FmAppConfig, su_cmd, NULL);
+        INIT_BOOL(builder, FmConfig, force_startup_notify, NULL);
 
         /* archiver integration */
         init_archiver_combo(builder);
@@ -339,6 +355,7 @@ void fm_edit_preference( GtkWindow* parent, int page )
         gtk_tree_selection_select_iter(tree_sel, &it);
         g_object_unref(tab_label_model);
         g_signal_connect(tree_sel, "changed", G_CALLBACK(on_tab_label_list_sel_changed), notebook);
+        g_signal_connect(notebook, "switch-page", G_CALLBACK(on_notebook_page_changed), tree_sel);
         gtk_notebook_set_show_tabs(notebook, FALSE);
 
         g_signal_connect(pref_dlg, "response", G_CALLBACK(on_response), &pref_dlg);
@@ -349,6 +366,8 @@ void fm_edit_preference( GtkWindow* parent, int page )
         if(parent)
             gtk_window_set_transient_for(pref_dlg, parent);
     }
+    if(page < 0 || page >= gtk_notebook_get_n_pages(notebook))
+        page = 0;
     gtk_notebook_set_current_page(notebook, page);
     gtk_window_present(pref_dlg);
 }

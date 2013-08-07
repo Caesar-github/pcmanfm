@@ -117,8 +117,8 @@ void fm_app_config_load_from_key_file(FmAppConfig* cfg, GKeyFile* kf)
     fm_key_file_get_bool(kf, "volume", "autorun", &cfg->autorun);
 
     /* desktop */
-    fm_key_file_get_int(kf, "desktop", "wallpaper_mode", &tmp_int);
-    cfg->wallpaper_mode = (FmWallpaperMode)tmp_int;
+    if(fm_key_file_get_int(kf, "desktop", "wallpaper_mode", &tmp_int))
+        cfg->wallpaper_mode = (FmWallpaperMode)tmp_int;
 
     if(cfg->wallpapers_configured > 0)
     {
@@ -129,6 +129,7 @@ void fm_app_config_load_from_key_file(FmAppConfig* cfg, GKeyFile* kf)
         g_free(cfg->wallpapers);
     }
     g_free(cfg->wallpaper);
+    cfg->wallpaper = NULL;
     fm_key_file_get_int(kf, "desktop", "wallpapers_configured", &cfg->wallpapers_configured);
     if(cfg->wallpapers_configured > 0)
     {
@@ -193,18 +194,18 @@ void fm_app_config_load_from_key_file(FmAppConfig* cfg, GKeyFile* kf)
 
     fm_key_file_get_int(kf, "ui", "splitter_pos", &cfg->splitter_pos);
 
-    fm_key_file_get_int(kf, "ui", "side_pane_mode", &tmp_int);
-    cfg->side_pane_mode = (FmSidePaneMode)tmp_int;
+    if(fm_key_file_get_int(kf, "ui", "side_pane_mode", &tmp_int))
+        cfg->side_pane_mode = (FmSidePaneMode)tmp_int;
 
     /* default values for folder views */
-    fm_key_file_get_int(kf, "ui", "view_mode", &tmp_int);
-    if(!FM_FOLDER_VIEW_MODE_IS_VALID(tmp_int))
+    if(!fm_key_file_get_int(kf, "ui", "view_mode", &tmp_int) ||
+       !FM_STANDARD_VIEW_MODE_IS_VALID(tmp_int))
         cfg->view_mode = FM_FV_ICON_VIEW;
     else
         cfg->view_mode = tmp_int;
     fm_key_file_get_bool(kf, "ui", "show_hidden", &cfg->show_hidden);
-    fm_key_file_get_int(kf, "ui", "sort_type", &tmp_int);
-    if(tmp_int == GTK_SORT_DESCENDING)
+    if(fm_key_file_get_int(kf, "ui", "sort_type", &tmp_int) &&
+       tmp_int == GTK_SORT_DESCENDING)
         cfg->sort_type = GTK_SORT_DESCENDING;
     else
         cfg->sort_type = GTK_SORT_ASCENDING;

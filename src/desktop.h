@@ -46,7 +46,7 @@ typedef struct _FmBackgroundCache   FmBackgroundCache;
 struct _FmDesktop
 {
     GtkWindow parent;
-    GdkGC* gc; /* FIXME: obsoleted, replace with Cairo */
+    /*< private >*/
     PangoLayout* pl;
     FmCellRendererPixbuf* icon_render;
     GList* fixed_items;
@@ -77,9 +77,8 @@ struct _FmDesktop
     FmDndDest* dnd_dest;
     guint single_click_timeout_handler;
     FmFolderModel* model;
-    FmBackgroundCache* wallpapers;
-    GtkMenu* popup;
-    uint cur_desktop;
+    guint cur_desktop;
+    gint monitor;
 };
 
 struct _FmDesktopClass
@@ -87,16 +86,12 @@ struct _FmDesktopClass
     GtkWindowClass parent_class;
 };
 
-gboolean fm_desktop_has_selected_item(FmDesktop* desktop);
-FmFileInfoList* fm_desktop_dup_selected_files(FmDesktop* desktop);
-FmPathList* fm_desktop_dup_selected_paths(FmDesktop* desktop);
-
 GType       fm_desktop_get_type     (void);
-FmDesktop*  fm_desktop_new          (void);
+FmDesktop*  fm_desktop_new          (GdkScreen* screen, gint monitor);
 
-FmDesktop*  fm_desktop_get          (guint screen);
+FmDesktop*  fm_desktop_get          (guint screen, guint monitor);
 
-void fm_desktop_manager_init();
+void fm_desktop_manager_init(gint on_screen);
 void fm_desktop_manager_finalize();
 
 G_END_DECLS

@@ -58,6 +58,7 @@ struct _FmTabPage
     FmNavHistory* nav_history;
     char* status_text[FM_STATUS_TEXT_NUM];
     FmFolder* folder;
+    gboolean busy : 1;
 };
 
 struct _FmTabPageClass
@@ -68,6 +69,9 @@ struct _FmTabPageClass
     void (*status)(FmTabPage* page, guint type, const char* status_text);
 };
 
+/* Side Pane mode extensions */
+#define FM_SP_MODE_MASK 0x1f
+#define FM_SP_HIDE      0x20
 
 GType fm_tab_page_get_type(void);
 
