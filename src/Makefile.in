@@ -33,7 +33,6 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = pcmanfm$(EXEEXT)
-noinst_PROGRAMS = xml-purge$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -45,7 +44,7 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
-PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 =
 am_pcmanfm_OBJECTS = pcmanfm-pcmanfm.$(OBJEXT) \
 	pcmanfm-app-config.$(OBJEXT) pcmanfm-main-win.$(OBJEXT) \
@@ -59,11 +58,6 @@ pcmanfm_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 pcmanfm_LINK = $(CCLD) $(pcmanfm_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am_xml_purge_OBJECTS = xml_purge-xml-purge.$(OBJEXT)
-xml_purge_OBJECTS = $(am_xml_purge_OBJECTS)
-xml_purge_DEPENDENCIES = $(am__DEPENDENCIES_1)
-xml_purge_LINK = $(CCLD) $(xml_purge_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -72,8 +66,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(pcmanfm_SOURCES) $(xml_purge_SOURCES)
-DIST_SOURCES = $(pcmanfm_SOURCES) $(xml_purge_SOURCES)
+SOURCES = $(pcmanfm_SOURCES)
+DIST_SOURCES = $(pcmanfm_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -242,9 +236,6 @@ pcmanfm_LDADD = \
 	$(FM_LIBS) \
 	$(NULL)
 
-xml_purge_SOURCES = xml-purge.c
-xml_purge_CFLAGS = $(GIO_CFLAGS)
-xml_purge_LDADD = $(GIO_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -316,15 +307,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 pcmanfm$(EXEEXT): $(pcmanfm_OBJECTS) $(pcmanfm_DEPENDENCIES) 
 	@rm -f pcmanfm$(EXEEXT)
 	$(pcmanfm_LINK) $(pcmanfm_OBJECTS) $(pcmanfm_LDADD) $(LIBS)
-xml-purge$(EXEEXT): $(xml_purge_OBJECTS) $(xml_purge_DEPENDENCIES) 
-	@rm -f xml-purge$(EXEEXT)
-	$(xml_purge_LINK) $(xml_purge_OBJECTS) $(xml_purge_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -341,7 +326,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcmanfm-tab-page.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcmanfm-utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcmanfm-volume-manager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml_purge-xml-purge.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -483,20 +467,6 @@ pcmanfm-single-inst.obj: single-inst.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pcmanfm_CFLAGS) $(CFLAGS) -c -o pcmanfm-single-inst.obj `if test -f 'single-inst.c'; then $(CYGPATH_W) 'single-inst.c'; else $(CYGPATH_W) '$(srcdir)/single-inst.c'; fi`
 
-xml_purge-xml-purge.o: xml-purge.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -MT xml_purge-xml-purge.o -MD -MP -MF $(DEPDIR)/xml_purge-xml-purge.Tpo -c -o xml_purge-xml-purge.o `test -f 'xml-purge.c' || echo '$(srcdir)/'`xml-purge.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xml_purge-xml-purge.Tpo $(DEPDIR)/xml_purge-xml-purge.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xml-purge.c' object='xml_purge-xml-purge.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -c -o xml_purge-xml-purge.o `test -f 'xml-purge.c' || echo '$(srcdir)/'`xml-purge.c
-
-xml_purge-xml-purge.obj: xml-purge.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -MT xml_purge-xml-purge.obj -MD -MP -MF $(DEPDIR)/xml_purge-xml-purge.Tpo -c -o xml_purge-xml-purge.obj `if test -f 'xml-purge.c'; then $(CYGPATH_W) 'xml-purge.c'; else $(CYGPATH_W) '$(srcdir)/xml-purge.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xml_purge-xml-purge.Tpo $(DEPDIR)/xml_purge-xml-purge.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xml-purge.c' object='xml_purge-xml-purge.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -c -o xml_purge-xml-purge.obj `if test -f 'xml-purge.c'; then $(CYGPATH_W) 'xml-purge.c'; else $(CYGPATH_W) '$(srcdir)/xml-purge.c'; fi`
-
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -613,8 +583,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-noinstPROGRAMS \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -684,17 +653,17 @@ uninstall-am: uninstall-binPROGRAMS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-noinstPROGRAMS ctags distclean \
-	distclean-compile distclean-generic distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS
+	clean-generic ctags distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

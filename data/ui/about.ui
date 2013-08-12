@@ -1,4 +1,6 @@
-<?xml version="1.0"?><interface><object class="GtkAboutDialog" id="dlg"><property name="border_width">5</property><property name="window_position">center-on-parent</property><property name="type_hint">dialog</property><property name="has_separator">False</property><property name="program_name">PCManFM</property><property name="version">1.1.1</property><property name="copyright" translatable="yes">Copyright (C) 2009 - 2013</property><property name="comments" translatable="yes">Lightweight file manager
+<?xml version="1.0"?><interface>
+  
+<object class="GtkAboutDialog" id="dlg"><property name="border_width">5</property><property name="window_position">center-on-parent</property><property name="type_hint">dialog</property><property name="has_separator">False</property><property name="program_name">PCManFM</property><property name="version">1.1.2</property><property name="copyright" translatable="yes">Copyright (C) 2009 - 2013</property><property name="comments" translatable="yes">Lightweight file manager
 
 Developed by Hon Jen Yee (PCMan)</property><property name="website">http://sourceforge.net/projects/pcmanfm</property><property name="license">PCMan File Manager
 
