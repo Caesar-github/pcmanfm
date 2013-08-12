@@ -1,3 +1,31 @@
+pcmanfm (1.1.1-1) unstable; urgency=low
+
+  [ Daniel Baumann ]
+  * Updating GPL blurb in copyright file.
+  * Removing superfluous comma in copyright file.
+  * Merging upstream version 1.0.
+  * Enabling hardening build flags.
+
+  [ Andriy Grytsenko ]
+  * Removing manpage in favor to one shipped with tarball.
+  * Merging upstream version 1.1.1.
+    (Closes: #659970, #703165, #689317, #594674, #713328)
+  * Updating libfm version requirement.
+  * Removing unneeded build dependencies.
+  * Removing wrong dependency on libfm-gtk-bin.
+  * Adding two alternative icon themes: oxygen-icon-theme, tango-icon-theme.
+  * Removing unneeded autoreconf call.
+  * Updating Build-Depends: it should require libfm-gtk-dev now.
+  * debian/rules: Enable parallel building.
+  * Updating too short description for pcmanfm-dbg.
+  * Removing Daniel Baumann from uploaders (Closes: #704355).
+
+  [ Andrew Lee (李健秋) ]
+  * Added Andriy Grytsenko <andrej@rep.kiev.ua> in uploaders.
+  * debian/control: refine build-deps.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Fri, 09 Aug 2013 04:11:40 +0800
+
 pcmanfm (0.9.10-3) unstable; urgency=low
 
   * Updating maintainer field.
