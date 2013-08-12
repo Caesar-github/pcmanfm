@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Debian LXDE Maintainers <lxde-debian@lists.lxde.org>
 Uploaders:
- Andrew Lee (李健秋) <ajqlee@debian.org>
+ Andrew Lee (李健秋) <ajqlee@debian.org>, Andriy Grytsenko <andrej@rep.kiev.ua>
 Build-Depends:
  debhelper (>= 9), intltool, pkg-config,
  libfm-gtk-dev (>= 1.0.1), libgtk2.0-dev
