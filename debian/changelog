@@ -1,3 +1,11 @@
+pcmanfm (1.1.2-1) unstable; urgency=low
+
+  [ Andriy Grytsenko ]
+  * Merging upstream version 1.1.2.
+  * Removing override_dh_auto_test from debian/rules.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Fri, 16 Aug 2013 20:43:45 +0800
+
 pcmanfm (1.1.1-1) unstable; urgency=low
 
   [ Daniel Baumann ]
