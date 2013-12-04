@@ -1,2 +1,3 @@
 version=3
-http://sf.net/pcmanfm/pcmanfm-(.*)\.tar\.(?:gz|bz2)
+opts=uversionmangle=s/(\d)[_\.\-\+]?((RC|rc|beta|alpha)\d*)$/$1~$2/ \
+http://sf.net/pcmanfm/pcmanfm-(\d\S*)\.tar\.(?:xz|gz)
