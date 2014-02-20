@@ -3,36 +3,39 @@ NULL=
 AM_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)/pcmanfm"\" \
 	-DPACKAGE_UI_DIR=\""$(datadir)/pcmanfm/ui"\" \
+	-DPACKAGE_MODULES_DIR=\""$(libdir)/pcmanfm"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
 bin_PROGRAMS = pcmanfm
 
 pcmanfm_SOURCES = \
 	pcmanfm.c \
-	pcmanfm.h \
 	app-config.c \
-	app-config.h \
 	main-win.c \
-	main-win.h \
 	tab-page.c \
-	tab-page.h \
 	desktop.c \
-	desktop.h \
 	volume-manager.c \
-	volume-manager.h \
 	pref.c \
-	pref.h \
-	utils.c \
-	utils.h \
-	gseal-gtk-compat.h \
 	single-inst.c \
-	single-inst.h \
+	connect-server.c \
 	$(NULL)
 
 EXTRA_DIST= \
 	main-win-ui.c \
 	desktop-ui.c \
+	pcmanfm.h \
+	app-config.h \
+	main-win.h \
+	tab-page.h \
+	desktop.h \
+	volume-manager.h \
+	pref.h \
+	single-inst.h \
+	connect-server.h \
+	gseal-gtk-compat.h \
 	$(NULL)
+
+include_HEADERS = pcmanfm-modules.h
 
 pcmanfm_CFLAGS = \
 	$(XLIB_CFLAGS) \

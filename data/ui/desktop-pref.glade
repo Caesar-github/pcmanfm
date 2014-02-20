@@ -82,18 +82,18 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkHBox" id="hbox3">
+                              <object class="GtkHBox" id="hbox2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="spacing">12</property>
                                 <child>
-                                  <object class="GtkLabel" id="label3">
+                                  <object class="GtkLabel" id="label4">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">_Wallpaper:</property>
+                                    <property name="label" translatable="yes">Wallpaper _mode:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="mnemonic_widget">wallpaper</property>
+                                    <property name="mnemonic_widget">wallpaper_mode</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -102,11 +102,16 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFileChooserButton" id="wallpaper">
+                                  <object class="GtkComboBox" id="wallpaper_mode">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="title" translatable="yes">Please select an image file</property>
-                                    <property name="width_chars">40</property>
+                                    <property name="model">wp_modes</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                                      <attributes>
+                                        <attribute name="text">0</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -122,20 +127,72 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkAlignment" id="alignment5">
+                              <object class="GtkVBox" id="wallpaper_box">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="left_padding">24</property>
+                                <property name="spacing">6</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="wallpaper_common">
-                                    <property name="label" translatable="yes">_Use the same wallpaper on all desktops</property>
+                                  <object class="GtkHBox" id="hbox3">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="use_action_appearance">False</property>
-                                    <property name="use_underline">True</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkLabel" id="label3">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="label" translatable="yes">_Wallpaper:</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="mnemonic_widget">wallpaper</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkFileChooserButton" id="wallpaper">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="title" translatable="yes">Please select an image file</property>
+                                        <property name="width_chars">40</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
                                   </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment5">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">24</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="wallpaper_common">
+                                        <property name="label" translatable="yes">_Use the same wallpaper on all desktops</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -183,51 +240,6 @@
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
                                 <property name="position">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkHBox" id="hbox2">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="spacing">12</property>
-                                <child>
-                                  <object class="GtkLabel" id="label4">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">Wallpaper _mode:</property>
-                                    <property name="use_underline">True</property>
-                                    <property name="mnemonic_widget">wallpaper_mode</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="wallpaper_mode">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="model">wp_modes</property>
-                                    <child>
-                                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
-                                      <attributes>
-                                        <attribute name="text">0</attribute>
-                                      </attributes>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">3</property>
                               </packing>
                             </child>
                           </object>
@@ -470,8 +482,9 @@
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="show_my_doc">
-                                <property name="label" translatable="yes">_Show "My Documents" icon on desktop</property>
+                              <object class="GtkCheckButton" id="show_documents">
+                                <property name="label" translatable="yes">_Show "Documents" folder on the desktop</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_action_appearance">False</property>
@@ -486,7 +499,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="show_my_computer">
-                                <property name="label" translatable="yes">Show "_My Computer" icon on desktop</property>
+                                <property name="label" translatable="yes">Sho_w "Devices" folder on the desktop</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_action_appearance">False</property>
@@ -501,7 +514,8 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="show_trash">
-                                <property name="label" translatable="yes">Show "_Trash Bin" icon on desktop</property>
+                                <property name="label" translatable="yes">Show "_Trash Can" folder on the desktop</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_action_appearance">False</property>
@@ -515,8 +529,9 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="show_volumes">
-                                <property name="label" translatable="yes">S_how icons of volumes on desktop</property>
+                              <object class="GtkCheckButton" id="show_mounts">
+                                <property name="label" translatable="yes">S_how connected volumes on the desktop</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_action_appearance">False</property>
@@ -585,6 +600,127 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkVBox" id="desktop_folder_chooser">
+                    <property name="can_focus">False</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkCheckButton" id="use_desktop_folder">
+                        <property name="label" translatable="yes">_Use desktop as a folder (show icons on it) by path:</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="desktop_folder_box">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">24</property>
+                        <child>
+                          <object class="GtkVBox" id="vbox10">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkHBox" id="hbox7">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="spacing">12</property>
+                                <child>
+                                  <object class="GtkRadioButton" id="desktop_folder_default">
+                                    <property name="label" translatable="yes" context="Use path for some folder: ...">Default</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">desktop_folder_set</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="desktop_folder_set">
+                                    <property name="label" translatable="yes" context="Use path for some folder: ...">Custom:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFileChooserButton" id="desktop_folder">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="action">select-folder</property>
+                                    <property name="title" translatable="yes">Select a Desktop Folder</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="desktop_folder_new_win">
+                                <property name="label" translatable="yes">_Open folders from desktop in new window</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="use_action_appearance">False</property>
+                                <property name="use_underline">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="position">2</property>
@@ -628,20 +764,28 @@
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Stretch to fill the entire screen</col>
+        <col id="0" translatable="yes">Stretch to fill the entire monitor area</col>
         <col id="1">1</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Stretch to fit the screen</col>
+        <col id="0" translatable="yes">Stretch to fit the monitor area</col>
         <col id="1">2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Center on the screen</col>
+        <col id="0" translatable="yes">Center unscaled image on the monitor</col>
         <col id="1">3</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Tile the image to fill the entire screen</col>
+        <col id="0" translatable="yes">Tile the image to fill the entire monitor area</col>
         <col id="1">4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Stretch and crop to fill the monitor area</col>
+        <col id="1">5</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Stretch to fill the complete screen</col>
+        <col id="1">6</col>
       </row>
     </data>
   </object>

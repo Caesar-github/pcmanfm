@@ -26,6 +26,7 @@ G_BEGIN_DECLS
 #if !GTK_CHECK_VERSION(2, 22, 0)
 #  define gdk_drag_context_get_actions(drag_context) \
         drag_context->actions
+#  define gtk_accessible_get_widget(accessible) accessible->widget
 #endif /* GTK < 2.22.0 */
 
 #if !GTK_CHECK_VERSION(2, 21, 0)
@@ -38,12 +39,18 @@ G_BEGIN_DECLS
 #define GDK_KEY_Left                            GDK_Left
 #define GDK_KEY_Right                           GDK_Right
 #define GDK_KEY_Up                              GDK_Up
+#define GDK_KEY_KP_Up                           GDK_KP_Up
 #define GDK_KEY_Down                            GDK_Down
+#define GDK_KEY_KP_Down                         GDK_KP_Down
 #define GDK_KEY_space                           GDK_space
 #define GDK_KEY_F2                              GDK_F2
 #define GDK_KEY_Return                          GDK_Return
 #define GDK_KEY_ISO_Enter                       GDK_ISO_Enter
 #define GDK_KEY_KP_Enter                        GDK_KP_Enter
+#define GDK_KEY_G                               GDK_G
+#define GDK_KEY_g                               GDK_g
+#define GDK_KEY_F                               GDK_F
+#define GDK_KEY_f                               GDK_f
 #endif
 
 #if !GTK_CHECK_VERSION (2, 20, 0)
@@ -56,6 +63,14 @@ G_BEGIN_DECLS
 #define gtk_widget_get_visible(widget)          GTK_WIDGET_VISIBLE(widget)
 #endif /* GTK+ < 2.18.0 */
 
+#if !GLIB_CHECK_VERSION(2, 28, 0)
+/* This API was added in glib 2.28 */
+#define g_list_free_full(list, free_func)       \
+{ \
+g_list_foreach(list, (GFunc)free_func, NULL); \
+g_list_free(list); \
+}
+#endif
 
 G_END_DECLS
 

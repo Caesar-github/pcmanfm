@@ -48,8 +48,11 @@ struct _FmMainWin
     GtkWindowGroup* win_group;
 
     GtkUIManager* ui;
+    GtkRadioAction* first_view_mode;
+    GtkRadioAction* first_side_pane_mode;
     GtkToolbar* toolbar;
     FmPathEntry* location;
+    FmPathBar* path_bar;
     GtkNotebook* notebook;
     FmTabPage* current_page;
     FmSidePane* side_pane;
@@ -66,6 +69,10 @@ struct _FmMainWin
     FmBookmarks* bookmarks;
     guint idle_handler; /* fix for GtkEntry bug */
     gboolean fullscreen;
+    gboolean maximized;
+    gboolean in_update;
+    gboolean enable_passive_view;
+    gboolean passive_view_on_right;
 };
 
 struct _FmMainWinClass

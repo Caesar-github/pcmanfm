@@ -1,7 +1,9 @@
 /*
- *      utils.h
+ *      connect-server.h
  *
- *      Copyright 2010 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
+ *      This file is a part of the PCManFM project.
+ *
+ *      Copyright 2013 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -19,16 +21,11 @@
  *      MA 02110-1301, USA.
  */
 
-#ifndef __PCMANFM_UTILS_H__
-#define __PCMANFM_UTILS_H__
+#ifndef __CONNECT_SERVER_H__
+#define __CONNECT_SERVER_H__ 1
 
 #include <gtk/gtk.h>
-#include <libfm/fm-gtk.h>
 
-G_BEGIN_DECLS
+void open_connect_dialog(GtkWindow* parent);
 
-
-G_END_DECLS
-
-#endif
-
+#endif /* __CONNECT_SERVER_H__ */

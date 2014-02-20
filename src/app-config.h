@@ -2,6 +2,7 @@
  *      app-config.h
  *
  *      Copyright 2010 - 2011 PCMan <pcman.tw@gmail.com>
+ *      Copyright 2012-2014 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@
 #include <libfm/fm-gtk.h>
 #include <gtk/gtk.h>
 
+#include "pcmanfm.h"
+
 G_BEGIN_DECLS
 
 #define app_config   ((FmAppConfig*)fm_config)
@@ -47,7 +50,9 @@ typedef enum
     FM_WP_STRETCH,
     FM_WP_FIT,
     FM_WP_CENTER,
-    FM_WP_TILE
+    FM_WP_TILE,
+    FM_WP_CROP,
+    FM_WP_SCREEN
 }FmWallpaperMode;
 
 typedef enum
@@ -61,6 +66,41 @@ typedef enum
 typedef struct _FmAppConfig         FmAppConfig;
 typedef struct _FmAppConfigClass        FmAppConfigClass;
 
+typedef struct
+{
+    FmWallpaperMode wallpaper_mode;
+    char* wallpaper;
+    char** wallpapers;
+    int wallpapers_configured;
+    gboolean wallpaper_common;
+    gint configured : 1;
+    gint changed : 1;
+    GdkColor desktop_bg;
+    GdkColor desktop_fg;
+    GdkColor desktop_shadow;
+    char* desktop_font;
+    char *folder; /* NULL if default, empty if no icons, else path */
+    gboolean show_wm_menu;
+#if FM_CHECK_VERSION(1, 0, 2)
+    FmSortMode desktop_sort_type;
+    FmFolderModelCol desktop_sort_by;
+#else
+    GtkSortType desktop_sort_type;
+    int desktop_sort_by;
+#endif
+#if FM_CHECK_VERSION(1, 2, 0)
+    gboolean show_documents;
+    gboolean show_trash;
+    gboolean show_mounts;
+#endif
+} FmDesktopConfig;
+
+typedef struct
+{
+    char *last_used;
+    gboolean dont_ask;
+} FmAutorunChoice;
+
 struct _FmAppConfig
 {
     FmConfig parent;
@@ -71,6 +111,7 @@ struct _FmAppConfig
     gboolean mount_on_startup;
     gboolean mount_removable;
     gboolean autorun;
+    GHashTable *autorun_choices;
 
     /* ui */
     gboolean always_show_tabs;
@@ -79,35 +120,48 @@ struct _FmAppConfig
     int win_width;
     int win_height;
     int splitter_pos;
+    gboolean media_in_new_tab;
+    gboolean desktop_folder_new_win;
+    gboolean change_tab_on_drop;
+    gboolean close_on_unmount;
+#if FM_CHECK_VERSION(1, 2, 0)
+    gboolean focus_previous;
+#endif
+    gboolean maximized;
+    gboolean pathbar_mode_buttons;
 
     FmSidePaneMode side_pane_mode;
 
     /* default values for folder views */
     guint view_mode;
     gboolean show_hidden;
+#if FM_CHECK_VERSION(1, 0, 2)
+    FmSortMode sort_type;
+    FmFolderModelCol sort_by;
+    /* list of columns formatted as name[:size] */
+    char **columns;
+#else
     GtkSortType sort_type;
     int sort_by;
+#endif
+    gboolean show_statusbar;
+#if FM_CHECK_VERSION(1, 2, 0)
+    char *home_path;
+#endif
 
-    char* su_cmd;
+    /*char* su_cmd;*/
 
-    /* desktop manager */
-    /* FIXME: make these setting per FmDesktop */
-    /* emit "changed::wallpaper" */
-    FmWallpaperMode wallpaper_mode;
-    char* wallpaper;
-    char** wallpapers;
-    int wallpapers_configured;
-    gboolean wallpaper_common;
-    GdkColor desktop_bg;
-    /* emit "changed::desktop_text" */
-    GdkColor desktop_fg;
-    GdkColor desktop_shadow;
-    /* emit "changed::desktop_font" */
-    char* desktop_font;
+    /* pre-1.2.0 style config - common settings for all monitors */
+    FmDesktopConfig desktop_section;
 
-    gboolean show_wm_menu;
-    GtkSortType desktop_sort_type;
-    int desktop_sort_by;
+    /* toolbar settings */
+    struct {
+        gboolean visible : 1;
+        gboolean new_win : 1;
+        gboolean new_tab : 1;
+        gboolean nav : 1;
+        gboolean home : 1;
+    } tb;
 };
 
 struct _FmAppConfigClass
@@ -124,6 +178,36 @@ void fm_app_config_load_from_key_file(FmAppConfig* cfg, GKeyFile* kf);
 
 void fm_app_config_save_profile(FmAppConfig* cfg, const char* name);
 
+void fm_app_config_load_desktop_config(GKeyFile *kf, const char *group, FmDesktopConfig *cfg);
+void fm_app_config_save_desktop_config(GString *buf, const char *group, FmDesktopConfig *cfg);
+
+#if FM_CHECK_VERSION(1, 0, 2)
+gboolean fm_app_config_get_config_for_path(FmPath *path, FmSortMode *mode,
+                                           FmFolderModelCol *by,
+                                           FmStandardViewMode *view_mode,
+                                           gboolean *show_hidden,
+                                           char ***columns);
+void fm_app_config_save_config_for_path(FmPath *path, FmSortMode mode,
+                                        FmFolderModelCol by,
+                                        FmStandardViewMode view_mode,
+                                        gboolean show_hidden,
+                                        char **columns);
+#else
+gboolean fm_app_config_get_config_for_path(FmPath *path, GtkSortType *mode,
+                                           gint *by, FmStandardViewMode *view_mode,
+                                           gboolean *show_hidden, char ***columns);
+void fm_app_config_save_config_for_path(FmPath *path, GtkSortType mode, gint by,
+                                        FmStandardViewMode view_mode,
+                                        gboolean show_hidden, char **columns);
+#endif
+void fm_app_config_clear_config_for_path(FmPath *path);
+
+void fm_app_config_set_autorun_choice(FmAppConfig *cfg,
+                                      const char *content_type,
+                                      const char *app, gboolean dont_ask);
+
+FmWallpaperMode fm_app_wallpaper_get_mode_by_name(const char *name);
+const char *fm_app_wallpaper_get_mode_name(FmWallpaperMode mode);
 
 G_END_DECLS
 

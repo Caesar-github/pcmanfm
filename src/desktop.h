@@ -2,6 +2,7 @@
  *      desktop.h
  *
  *      Copyright 2010 - 2012 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
+ *      Copyright 2012-2013 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -25,6 +26,8 @@
 
 #include <gtk/gtk.h>
 #include <libfm/fm-gtk.h>
+
+#include "app-config.h"
 
 G_BEGIN_DECLS
 
@@ -53,8 +56,8 @@ struct _FmDesktop
     guint xpad;
     guint ypad;
     guint spacing;
-    guint xmargin;
-    guint ymargin;
+    gint xmargin;
+    gint ymargin;
     guint text_h;
     guint text_w;
     guint pango_text_h;
@@ -79,6 +82,15 @@ struct _FmDesktop
     FmFolderModel* model;
     guint cur_desktop;
     gint monitor;
+    FmBackgroundCache *cache;
+    /* interactive search subwindow */
+    GtkWidget *search_window;
+    GtkWidget *search_entry;
+    gboolean search_imcontext_changed : 1;
+    guint search_entry_changed_id;
+    guint search_timeout_id;
+    /* desktop settings for this monitor */
+    FmDesktopConfig conf;
 };
 
 struct _FmDesktopClass
@@ -89,7 +101,10 @@ struct _FmDesktopClass
 GType       fm_desktop_get_type     (void);
 FmDesktop*  fm_desktop_new          (GdkScreen* screen, gint monitor);
 
-FmDesktop*  fm_desktop_get          (guint screen, guint monitor);
+FmDesktop*  fm_desktop_get          (gint screen, gint monitor);
+
+void        fm_desktop_preference   (GtkAction *act, FmDesktop *desktop);
+void        fm_desktop_wallpaper_changed(FmDesktop *desktop);
 
 void fm_desktop_manager_init(gint on_screen);
 void fm_desktop_manager_finalize();
