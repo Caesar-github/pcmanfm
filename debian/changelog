@@ -1,3 +1,15 @@
+pcmanfm (1.2.0-1) unstable; urgency=low
+
+  * Bump Standards-Version to actual one (fixes lintian warning, see QA page).
+  * Adding files NEWS to pcmanfm documentation.
+  * Bump Standards-Version to 3.9.5.
+  * Updating watch file to support XZ tarball format and non-numeric versions.
+  * Merging upstream version 1.2.0. (Closes: #656298, #731549)
+  * Use single docs directory for all packages.
+  * Raising version of libfm required to >= 1.2.0.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Tue, 25 Feb 2014 04:07:51 +0200
+
 pcmanfm (1.1.2-1) unstable; urgency=low
 
   [ Andriy Grytsenko ]
