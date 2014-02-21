@@ -13,3 +13,6 @@ override_dh_builddeb:
 
 override_dh_strip:
 	dh_strip --dbg-package=pcmanfm-dbg
+
+override_dh_installdocs:
+	dh_installdocs --link-doc=pcmanfm
