@@ -1,3 +1,9 @@
+pcmanfm (1.2.1-1) unstable; urgency=low
+
+  * Merging upstream version 1.2.1.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Thu, 03 Jul 2014 17:40:14 +0300
+
 pcmanfm (1.2.0-1) unstable; urgency=low
 
   * Bump Standards-Version to actual one (fixes lintian warning, see QA page).
