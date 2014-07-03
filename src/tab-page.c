@@ -66,6 +66,7 @@ enum {
     OPEN_DIR,
     STATUS,
     GOT_FOCUS,
+    LOADED,
     N_SIGNALS
 };
 
@@ -153,6 +154,15 @@ static void fm_tab_page_class_init(FmTabPageClass *klass)
                     G_TYPE_FROM_CLASS(klass),
                     G_SIGNAL_RUN_FIRST,
                     G_STRUCT_OFFSET (FmTabPageClass, got_focus),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__VOID,
+                    G_TYPE_NONE, 0);
+    /* the folder finished loading */
+    signals[LOADED] =
+        g_signal_new("loaded",
+                    G_TYPE_FROM_CLASS(klass),
+                    G_SIGNAL_RUN_FIRST,
+                    G_STRUCT_OFFSET (FmTabPageClass, loaded),
                     NULL, NULL,
                     g_cclosure_marshal_VOID__VOID,
                     G_TYPE_NONE, 0);
@@ -665,6 +675,7 @@ static void on_folder_finish_loading(FmFolder* folder, FmTabPage* page)
 
     _tab_unset_busy_cursor(page);
     /* g_debug("finish-loading"); */
+    g_signal_emit(page, signals[LOADED], 0);
 }
 
 static void on_folder_unmount(FmFolder* folder, FmTabPage* page)

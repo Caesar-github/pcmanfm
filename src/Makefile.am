@@ -49,3 +49,10 @@ pcmanfm_LDADD = \
 	$(XLIB_LIBS) \
 	$(FM_LIBS) \
 	$(NULL)
+
+# prepare modules directory
+install-exec-local:
+	$(MKDIR_P) "$(DESTDIR)$(libdir)/pcmanfm"
+
+uninstall-local:
+	-rmdir "$(DESTDIR)$(libdir)/pcmanfm"

@@ -356,8 +356,6 @@ static void on_folder_view_sel_changed(FmFolderView* fv, gint n_sel, FmMainWin* 
     gtk_action_set_sensitive(act, has_selected);
     act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/CopyPath");
     gtk_action_set_sensitive(act, has_selected);
-    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Rename");
-    gtk_action_set_sensitive(act, n_sel == 1); /* can rename only single file */
     act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Link");
     gtk_action_set_sensitive(act, has_selected);
     act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/CopyTo");
@@ -365,6 +363,21 @@ static void on_folder_view_sel_changed(FmFolderView* fv, gint n_sel, FmMainWin* 
     act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/MoveTo");
     gtk_action_set_sensitive(act, has_selected);
     act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/FileProp");
+    gtk_action_set_sensitive(act, has_selected);
+    /* special handling for 'Rename' option: we can rename only single file,
+       and also because GIO doesn't support changing the .desktop files
+       display names, therefore we have to disable it in some cases */
+    has_selected = FALSE;
+    if (n_sel == 1)
+    {
+        FmFileInfoList *files = fm_folder_view_dup_selected_files(fv);
+        FmFileInfo *fi = fm_file_info_list_peek_head(files);
+        if (fm_file_info_can_set_name(fi) && !fm_file_info_is_shortcut(fi)
+            && !fm_file_info_is_desktop_entry(fi))
+            has_selected = TRUE;
+        fm_file_info_list_unref(files);
+    }
+    act = gtk_ui_manager_get_action(win->ui, "/menubar/EditMenu/Rename");
     gtk_action_set_sensitive(act, has_selected);
 }
 
@@ -475,9 +488,6 @@ static void on_history_item(GtkMenuItem* mi, FmMainWin* win)
     GList* l = g_object_get_qdata(G_OBJECT(mi), main_win_qdata);
 #endif
     fm_tab_page_history(page, l);
-    /* update folder popup */
-    fm_folder_view_set_active(win->folder_view, FALSE);
-    fm_folder_view_add_popup(win->folder_view, GTK_WINDOW(win), NULL);
     _update_hist_buttons(win);
 }
 
@@ -1513,18 +1523,12 @@ static void _update_hist_buttons(FmMainWin* win)
 static void on_go_back(GtkAction* act, FmMainWin* win)
 {
     fm_tab_page_back(win->current_page);
-    /* update folder popup */
-    fm_folder_view_set_active(win->folder_view, FALSE);
-    fm_folder_view_add_popup(win->folder_view, GTK_WINDOW(win), NULL);
     _update_hist_buttons(win);
 }
 
 static void on_go_forward(GtkAction* act, FmMainWin* win)
 {
     fm_tab_page_forward(win->current_page);
-    /* update folder popup */
-    fm_folder_view_set_active(win->folder_view, FALSE);
-    fm_folder_view_add_popup(win->folder_view, GTK_WINDOW(win), NULL);
     _update_hist_buttons(win);
 }
 
@@ -1584,17 +1588,20 @@ void fm_main_win_chdir_by_name(FmMainWin* win, const char* path_str)
 
 void fm_main_win_chdir(FmMainWin* win, FmPath* path)
 {
+    GtkWidget *current_focus;
+
     /* NOTE: fm_tab_page_chdir() calls fm_side_pane_chdir(), which can
      * trigger on_side_pane_chdir() callback. So we need to block it here. */
     g_signal_handlers_block_by_func(win->side_pane, on_side_pane_chdir, win);
     fm_tab_page_chdir(win->current_page, path);
-    /* update folder popup */
-    fm_folder_view_set_active(win->folder_view, FALSE);
-    fm_folder_view_add_popup(win->folder_view, GTK_WINDOW(win), NULL);
     g_signal_handlers_unblock_by_func(win->side_pane, on_side_pane_chdir, win);
     _update_hist_buttons(win);
     update_view_menu(win);
     update_file_menu(win, path);
+    /* bug SF#842: if location is focused then set cursor at end of field */
+    current_focus = gtk_window_get_focus(GTK_WINDOW(win));
+    if (current_focus == (GtkWidget*)win->location)
+        gtk_editable_set_position(GTK_EDITABLE(win->location), -1);
 }
 
 #if 0
@@ -2140,6 +2147,17 @@ static void on_tab_page_got_focus(FmTabPage* page, FmMainWin* win)
         gtk_notebook_set_current_page(win->notebook, n);
 }
 
+/* this callback may be called only after tab page is added */
+static void on_tab_page_loaded(FmTabPage *page, FmMainWin *win)
+{
+    FmFolderView *folder_view = fm_tab_page_get_folder_view(page);
+
+    /* update folder popup */
+    fm_folder_view_set_active(folder_view, FALSE);
+    fm_folder_view_add_popup(folder_view, GTK_WINDOW(win), NULL);
+    fm_folder_view_set_active(folder_view, (page == win->current_page));
+}
+
 #if FM_CHECK_VERSION(1, 0, 2)
 static void on_folder_view_filter_changed(FmFolderView* fv, FmMainWin* win)
 {
@@ -2291,6 +2309,8 @@ static void on_notebook_page_added(GtkNotebook* nb, GtkWidget* page, guint num, 
                      G_CALLBACK(on_tab_page_status_text), win);
     g_signal_connect(tab_page, "got-focus",
                      G_CALLBACK(on_tab_page_got_focus), win);
+    g_signal_connect(tab_page, "loaded",
+                     G_CALLBACK(on_tab_page_loaded), win);
     /* FIXME: remove direct access */
     g_signal_connect(tab_page->folder_view, "sort-changed",
                      G_CALLBACK(on_folder_view_sort_changed), win);
@@ -2338,6 +2358,8 @@ static void on_notebook_page_removed(GtkNotebook* nb, GtkWidget* page, guint num
                                          on_tab_page_status_text, win);
     g_signal_handlers_disconnect_by_func(tab_page,
                                          on_tab_page_got_focus, win);
+    g_signal_handlers_disconnect_by_func(tab_page,
+                                         on_tab_page_loaded, win);
     if(folder_view)
     {
         g_signal_handlers_disconnect_by_func(folder_view,

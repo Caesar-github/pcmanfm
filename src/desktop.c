@@ -277,13 +277,13 @@ static inline void load_items(FmDesktop* desktop)
                 item->area.x = g_key_file_get_integer(kf, name, "x", NULL);
                 item->area.y = g_key_file_get_integer(kf, name, "y", NULL);
                 /* pull item into screen bounds */
-                if (item->area.x < desktop->xmargin)
-                    item->area.x = desktop->xmargin;
-                if (item->area.y < desktop->ymargin)
-                    item->area.y = desktop->ymargin;
+                if (item->area.x < desktop->xmargin + desktop->working_area.x)
+                    item->area.x = desktop->xmargin + desktop->working_area.x;
+                if (item->area.y < desktop->ymargin + desktop->working_area.y)
+                    item->area.y = desktop->ymargin + desktop->working_area.y;
                 calc_item_size(desktop, item, icon);
                 /* check if item is in screen bounds and pull it if it's not */
-                out = item->area.x + item->area.width + desktop->xmargin - desktop->working_area.width;
+                out = item->area.x + item->area.width + desktop->xmargin - desktop->working_area.width - desktop->working_area.x;
                 if (out > 0)
                 {
                     if (out > item->area.x - desktop->xmargin)
@@ -292,7 +292,7 @@ static inline void load_items(FmDesktop* desktop)
                     item->icon_rect.x -= out;
                     item->text_rect.x -= out;
                 }
-                out = item->area.y + item->area.height + desktop->ymargin - desktop->working_area.height;
+                out = item->area.y + item->area.height + desktop->ymargin - desktop->working_area.height - desktop->working_area.y;
                 if (out > 0)
                 {
                     if (out > item->area.y - desktop->ymargin)
@@ -486,6 +486,12 @@ static void copy_desktop_config(FmDesktopConfig *dst, FmDesktopConfig *src)
     dst->desktop_sort_type = src->desktop_sort_type;
     dst->desktop_sort_by = src->desktop_sort_by;
     dst->folder = g_strdup(src->folder);
+#if FM_CHECK_VERSION(1, 2, 0)
+    dst->show_documents = src->show_documents;
+    dst->show_trash = src->show_trash;
+    dst->show_mounts = src->show_mounts;
+#endif
+
 }
 
 #if FM_CHECK_VERSION(1, 2, 0)
@@ -1712,7 +1718,7 @@ _next_position:
                 item->area.x = self->working_area.x + x;
                 item->area.y = self->working_area.y + y;
                 calc_item_size(self, item, icon);
-                while (y < item->area.y + item->area.height)
+                while (self->working_area.y + y < item->area.y + item->area.height)
                     y += self->cell_h;
                 if(y > bottom)
                 {
@@ -1746,7 +1752,7 @@ _next_position_rtl:
                 item->area.x = self->working_area.x + x;
                 item->area.y = self->working_area.y + y;
                 calc_item_size(self, item, icon);
-                while (y < item->area.y + item->area.height)
+                while (self->working_area.y + y < item->area.y + item->area.height)
                     y += self->cell_h;
                 if(y > bottom)
                 {
@@ -1795,6 +1801,10 @@ static void paint_item(FmDesktop* self, FmDesktopItem* item, cairo_t* cr, GdkRec
     GdkWindow* window;
 #endif
     int text_x, text_y;
+
+    /* FIXME: don't draw dragged items on desktop, they are moved with mouse
+    if (item->is_selected && self->dragging)
+        return; */
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     style = gtk_widget_get_style_context(widget);
@@ -1892,14 +1902,14 @@ static void move_item(FmDesktop* desktop, FmDesktopItem* item, int x, int y, gbo
         redraw_item(desktop, item);
 
     /* correct coords to put item within working area still */
-    if (x > desktop->working_area.width - desktop->xmargin - item->area.width)
-        x = desktop->working_area.width - desktop->xmargin - item->area.width;
-    if (x < desktop->xmargin)
-        x = desktop->xmargin;
-    if (y > desktop->working_area.height - desktop->ymargin - item->area.height)
-        y = desktop->working_area.height - desktop->ymargin - item->area.height;
-    if (y < desktop->ymargin)
-        y = desktop->ymargin;
+    if (x > desktop->working_area.x + desktop->working_area.width - desktop->xmargin - item->area.width)
+        x = desktop->working_area.x + desktop->working_area.width - desktop->xmargin - item->area.width;
+    if (x < desktop->working_area.x + desktop->xmargin)
+        x = desktop->working_area.x + desktop->xmargin;
+    if (y > desktop->working_area.y + desktop->working_area.height - desktop->ymargin - item->area.height)
+        y = desktop->working_area.y + desktop->working_area.height - desktop->ymargin - item->area.height;
+    if (y < desktop->working_area.y + desktop->ymargin)
+        y = desktop->working_area.y + desktop->ymargin;
 
     dx = x - item->area.x;
     dy = y - item->area.y;
@@ -2042,6 +2052,32 @@ static void paint_rubber_banding_rect(FmDesktop* self, cairo_t* cr, GdkRectangle
     cairo_restore(cr);
 }
 
+static void _free_cache_image(FmBackgroundCache *cache)
+{
+#if GTK_CHECK_VERSION(3, 0, 0)
+    XFreePixmap(cairo_xlib_surface_get_display(cache->bg),
+                cairo_xlib_surface_get_drawable(cache->bg));
+    cairo_surface_destroy(cache->bg);
+#else
+    g_object_unref(cache->bg);
+#endif
+    cache->bg = NULL;
+    cache->wallpaper_mode = FM_WP_COLOR; /* for cache check */
+}
+
+static void _clear_bg_cache(FmDesktop *self)
+{
+    while(self->cache)
+    {
+        FmBackgroundCache *bg = self->cache;
+
+        self->cache = bg->next;
+        _free_cache_image(bg);
+        g_free(bg->filename);
+        g_free(bg);
+    }
+}
+
 static void update_background(FmDesktop* desktop, int is_it)
 {
     GtkWidget* widget = (GtkWidget*)desktop;
@@ -2068,11 +2104,11 @@ static void update_background(FmDesktop* desktop, int is_it)
 
         if(is_it >= 0) /* signal "changed::wallpaper" */
         {
+            int i;
+
             wallpaper = desktop->conf.wallpaper;
             if((gint)cur_desktop >= desktop->conf.wallpapers_configured)
             {
-                int i;
-
                 desktop->conf.wallpapers = g_renew(char *, desktop->conf.wallpapers, cur_desktop + 1);
                 /* fill the gap with current wallpaper */
                 for(i = MAX(desktop->conf.wallpapers_configured,0); i < (int)cur_desktop; i++)
@@ -2080,8 +2116,29 @@ static void update_background(FmDesktop* desktop, int is_it)
                 desktop->conf.wallpapers[cur_desktop] = NULL;
                 desktop->conf.wallpapers_configured = cur_desktop + 1;
             }
-            g_free(desktop->conf.wallpapers[cur_desktop]);
-            desktop->conf.wallpapers[cur_desktop] = g_strdup(wallpaper);
+            /* free old image if it's not used anymore */
+            else if (g_strcmp0(desktop->conf.wallpapers[cur_desktop], wallpaper))
+            {
+                wallpaper = desktop->conf.wallpapers[cur_desktop];
+                if (wallpaper)
+                {
+                    for (i = 0; i < desktop->conf.wallpapers_configured; i++)
+                        if (i != (int)cur_desktop && /* test if it's used */
+                            g_strcmp0(desktop->conf.wallpapers[i], wallpaper) == 0)
+                            break;
+                    if (i == desktop->conf.wallpapers_configured) /* no matches */
+                    {
+                        for (cache = desktop->cache; cache; cache = cache->next)
+                            if (strcmp(wallpaper, cache->filename) == 0)
+                                break;
+                        if (cache)
+                            _free_cache_image(cache);
+                    }
+                    g_free(wallpaper);
+                }
+                wallpaper = desktop->conf.wallpaper;
+                desktop->conf.wallpapers[cur_desktop] = g_strdup(wallpaper);
+            }
         }
         else /* desktop refresh */
         {
@@ -2113,7 +2170,10 @@ static void update_background(FmDesktop* desktop, int is_it)
         }
     }
     else
+    {
+        _clear_bg_cache(desktop);
         wallpaper = desktop->conf.wallpaper;
+    }
 
     if(desktop->conf.wallpaper_mode != FM_WP_COLOR && wallpaper && *wallpaper)
     {
@@ -2134,14 +2194,7 @@ static void update_background(FmDesktop* desktop, int is_it)
             if(cache)
             {
                 /* the same file but mode was changed */
-#if GTK_CHECK_VERSION(3, 0, 0)
-                XFreePixmap(cairo_xlib_surface_get_display(cache->bg),
-                            cairo_xlib_surface_get_drawable(cache->bg));
-                cairo_surface_destroy(cache->bg);
-#else
-                g_object_unref(cache->bg);
-#endif
-                cache->bg = NULL;
+                _free_cache_image(cache);
             }
             else if(desktop->cache)
             {
@@ -2433,30 +2486,16 @@ static void on_rows_reordered(FmFolderModel* model, GtkTreePath* parent_tp, GtkT
 /* ---------------------------------------------------------------------
     Events handlers */
 
-static void _clear_bg_cache(FmDesktop *self)
-{
-    while(self->cache)
-    {
-        FmBackgroundCache *bg = self->cache;
-
-        self->cache = bg->next;
-#if GTK_CHECK_VERSION(3, 0, 0)
-        XFreePixmap(cairo_xlib_surface_get_display(bg->bg),
-                    cairo_xlib_surface_get_drawable(bg->bg));
-        cairo_surface_destroy(bg->bg);
-#else
-        g_object_unref(bg->bg);
-#endif
-        g_free(bg->filename);
-        g_free(bg);
-    }
-}
-
 static void update_working_area(FmDesktop* desktop)
 {
     GdkScreen* screen = gtk_widget_get_screen((GtkWidget*)desktop);
+    GdkRectangle geom;
 #if GTK_CHECK_VERSION(3, 4, 0)
     gdk_screen_get_monitor_workarea(screen, desktop->monitor, &desktop->working_area);
+    /* we need working area coordinates within the monitor not the screen */
+    gdk_screen_get_monitor_geometry(screen, desktop->monitor, &geom);
+    desktop->working_area.x -= geom.x;
+    desktop->working_area.y -= geom.y;
 #else
     GdkWindow* root = gdk_screen_get_root_window(screen);
     Atom ret_type;
@@ -2467,7 +2506,9 @@ static void update_working_area(FmDesktop* desktop)
     gulong* working_area;
 
     /* default to screen size */
-    gdk_screen_get_monitor_geometry(screen, desktop->monitor, &desktop->working_area);
+    gdk_screen_get_monitor_geometry(screen, desktop->monitor, &geom);
+    desktop->working_area.width = geom.width;
+    desktop->working_area.height = geom.height;
 
     if(XGetWindowProperty(GDK_WINDOW_XDISPLAY(root), GDK_WINDOW_XID(root),
                        XA_NET_NUMBER_OF_DESKTOPS, 0, 1, False, XA_CARDINAL, &ret_type,
@@ -2499,24 +2540,23 @@ static void update_working_area(FmDesktop* desktop)
     }
     working_area = ((gulong*)prop) + cur_desktop * 4;
 
-    if((gint)working_area[0] > desktop->working_area.x &&
-       (gint)working_area[0] < desktop->working_area.x + desktop->working_area.width)
-    {
-        desktop->working_area.width -= (working_area[0] - desktop->working_area.x);
-        desktop->working_area.x = (gint)working_area[0];
-    }
-    if((gint)working_area[1] > desktop->working_area.y &&
-       (gint)working_area[1] < desktop->working_area.y + desktop->working_area.height)
-    {
-        desktop->working_area.height -= (working_area[1] - desktop->working_area.y);
-        desktop->working_area.y = (gint)working_area[1];
-    }
-    if((gint)(working_area[0] + working_area[2]) < desktop->working_area.x + desktop->working_area.width)
-        desktop->working_area.width = working_area[0] + working_area[2] - desktop->working_area.x;
-    if((gint)(working_area[1] + working_area[3]) < desktop->working_area.y + desktop->working_area.height)
-        desktop->working_area.height = working_area[1] + working_area[3] - desktop->working_area.y;
+    desktop->working_area.x = (gint)working_area[0] - geom.x;
+    desktop->working_area.y = (gint)working_area[1] - geom.y;
+    if(desktop->working_area.x > 0 &&
+       desktop->working_area.x < desktop->working_area.width)
+        desktop->working_area.width -= desktop->working_area.x;
+    if(desktop->working_area.y > 0 &&
+       desktop->working_area.y < desktop->working_area.height)
+        desktop->working_area.height -= desktop->working_area.y;
+    if(desktop->working_area.x + (gint)working_area[2] < desktop->working_area.width)
+        desktop->working_area.width = working_area[2] + desktop->working_area.x;
+    if(desktop->working_area.y + (gint)working_area[3] < desktop->working_area.height)
+        desktop->working_area.height = working_area[3] + desktop->working_area.y;
     g_debug("got working area: %d.%d.%d.%d", desktop->working_area.x, desktop->working_area.y,
             desktop->working_area.width, desktop->working_area.height);
+    /* we need working area coordinates within the monitor not the screen */
+    desktop->working_area.x = MAX(0, desktop->working_area.x);
+    desktop->working_area.y = MAX(0, desktop->working_area.y);
 
     XFree(prop);
 _out:
@@ -2831,6 +2871,9 @@ static FmDesktopItem* hit_test(FmDesktop* self, GtkTreeIter *it, int x, int y)
     if(model && gtk_tree_model_get_iter_first(model, it)) do
     {
         item = fm_folder_model_get_item_userdata(self->model, it);
+        /* we cannot drop dragged items onto themselves */
+        if (item->is_selected && self->dragging)
+            continue;
         if(is_point_in_rect(&item->icon_rect, x, y)
          || is_point_in_rect(&item->text_rect, x, y))
             return item;
@@ -2969,24 +3012,6 @@ static FmDesktopItem* get_nearest_item(FmDesktop* desktop, FmDesktopItem* item, 
         ;
     }
     return ret;
-}
-
-static gboolean has_selected_item(FmDesktop* desktop)
-{
-    GtkTreeModel* model;
-    GtkTreeIter it;
-
-    if (!desktop->model)
-        return FALSE;
-    model = GTK_TREE_MODEL(desktop->model);
-    if(gtk_tree_model_get_iter_first(model, &it)) do
-    {
-        FmDesktopItem* item = fm_folder_model_get_item_userdata(desktop->model, &it);
-        if(item->is_selected)
-            return TRUE;
-    }
-    while(gtk_tree_model_iter_next(model, &it));
-    return FALSE;
 }
 
 static void set_focused_item(FmDesktop* desktop, FmDesktopItem* item)
@@ -3392,6 +3417,8 @@ static gboolean on_button_release(GtkWidget* w, GdkEventButton* evt)
     else if(self->dragging)
     {
         self->dragging = FALSE;
+        /* FIXME: restore after drag */
+        queue_layout_items(self);
     }
     else if(fm_config->single_click && evt->button == 1)
     {
@@ -3515,29 +3542,13 @@ static gboolean on_motion_notify(GtkWidget* w, GdkEventMotion* evt)
 
     if(self->dragging)
     {
+        /* FIXME: never reached */
     }
     else if(self->rubber_bending)
     {
         update_rubberbanding(self, evt->x, evt->y);
     }
-    else
-    {
-        if (gtk_drag_check_threshold(w,
-                                    self->drag_start_x,
-                                    self->drag_start_y,
-                                    evt->x, evt->y))
-        {
-            GtkTargetList* target_list;
-            if(has_selected_item(self))
-            {
-                self->dragging = TRUE;
-                target_list = gtk_drag_source_get_target_list(w);
-                gtk_drag_begin(w, target_list,
-                             GDK_ACTION_COPY|GDK_ACTION_MOVE|GDK_ACTION_LINK,
-                             1, (GdkEvent*)evt);
-            }
-        }
-    }
+    /* we use auto-DnD so no DnD check is possible here */
 
     return TRUE;
 }
@@ -3820,6 +3831,7 @@ static void desktop_search_preedit_changed(GtkIMContext *im_context,
 static void desktop_search_position(FmDesktop *desktop)
 {
     GtkRequisition requisition;
+    GdkRectangle geom;
     gint x, y;
 
     /* make sure the search dialog is realized */
@@ -3832,8 +3844,10 @@ static void desktop_search_position(FmDesktop *desktop)
 #endif
 
     /* put it into right upper corner */
-    x = desktop->working_area.x + desktop->working_area.width - requisition.width;
-    y = desktop->working_area.y;
+    gdk_screen_get_monitor_geometry(gtk_widget_get_screen((GtkWidget*)desktop),
+                                    desktop->monitor, &geom);
+    x = geom.x + desktop->working_area.x + desktop->working_area.width - requisition.width;
+    y = geom.y + desktop->working_area.y;
 
     gtk_window_move(GTK_WINDOW(desktop->search_window), x, y);
 }
@@ -4375,6 +4389,157 @@ static void on_drag_data_received (GtkWidget *dest_widget,
     gtk_drag_finish(drag_context, TRUE, FALSE, time);
 }
 
+static GdkPixbuf *_create_drag_icon(FmDesktop *desktop, gint *x, gint *y)
+{
+    GtkTreeModel *model;
+    FmDesktopItem *item;
+    cairo_surface_t *s;
+    GdkPixbuf *pixbuf;
+    cairo_t *cr;
+    GdkPixbuf *icon;
+    GtkTreeIter it;
+    GdkRectangle area, icon_rect;
+#if !GTK_CHECK_VERSION(3, 0, 0)
+    guchar *dest_data, *src_data;
+    int dest_stride, src_stride, _x, _y;
+#endif
+
+    if (!desktop->model)
+        return NULL;
+    model = GTK_TREE_MODEL(desktop->model);
+    if (!gtk_tree_model_get_iter_first(model, &it))
+        return NULL;
+
+    /* determine the size of complete pixbuf */
+    area.width = 0; /* mark it */
+    do
+    {
+        item = fm_folder_model_get_item_userdata(desktop->model, &it);
+        if (!item->is_selected)
+            continue;
+        if (area.width == 0)
+            area = item->icon_rect;
+        else
+        {
+            if (item->icon_rect.x < area.x)
+            {
+                area.width += (area.x - item->icon_rect.x);
+                area.x = item->icon_rect.x;
+            }
+            if (item->icon_rect.x + item->icon_rect.width > area.x + area.width)
+                area.width = item->icon_rect.x + item->icon_rect.width - area.x;
+            if (item->icon_rect.y < area.y)
+            {
+                area.height += (area.y - item->icon_rect.y);
+                area.y = item->icon_rect.y;
+            }
+            if (item->icon_rect.y + item->icon_rect.height > area.y + area.height)
+                area.height = item->icon_rect.y + item->icon_rect.height - area.y;
+        }
+    }
+    while(gtk_tree_model_iter_next(model, &it));
+
+    /* now create the pixbuf */
+    if (area.width == 0) /* no selection??? */
+        return NULL;
+    area.width += 2;
+    area.height += 2;
+    s = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, area.width, area.height);
+    cr = cairo_create(s);
+
+    gtk_tree_model_get_iter_first(model, &it);
+    do
+    {
+        item = fm_folder_model_get_item_userdata(desktop->model, &it);
+        if (!item->is_selected)
+            continue;
+        /* FIXME: should we render name too, or is it too heavy? */
+        icon = NULL;
+        gtk_tree_model_get(model, &it, FM_FOLDER_MODEL_COL_ICON, &icon, -1);
+        /* draw the icon */
+        if (icon)
+        {
+            icon_rect.x = item->icon_rect.x - area.x + 1;
+            icon_rect.width = item->icon_rect.width;
+            icon_rect.y = item->icon_rect.y - area.y + 1;
+            icon_rect.height = item->icon_rect.height;
+//g_debug("icon at %d %d %d %d",icon_rect.x,icon_rect.y,icon_rect.width,icon_rect.height);
+            gdk_cairo_set_source_pixbuf(cr, icon, icon_rect.x, icon_rect.y);
+            gdk_cairo_rectangle(cr, &icon_rect);
+            cairo_fill(cr);
+            g_object_unref(icon);
+        }
+    }
+    while(gtk_tree_model_iter_next(model, &it));
+
+    cairo_destroy (cr);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    pixbuf = gdk_pixbuf_get_from_surface(s, 0, 0, area.width, area.height);
+#else
+    /* GTK2 has no API gdk_pixbuf_get_from_surface() but we cannot
+       preserve transparency using gdk_pixbuf_get_from_drawable() so
+       therefore have to implement that API behavior here instead */
+    pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, area.width, area.height);
+    cairo_surface_flush(s);
+    dest_data = gdk_pixbuf_get_pixels(pixbuf);
+    dest_stride = gdk_pixbuf_get_rowstride(pixbuf);
+    src_data = cairo_image_surface_get_data(s);
+    src_stride = cairo_image_surface_get_stride(s);
+
+    /* convert alpha from cairo_surface_t into GdkPixbuf format */
+    for (_y = 0; _y < area.height; _y++)
+    {
+        guint32 *src = (guint32 *) src_data;
+
+        for (_x = 0; _x < area.width; _x++)
+        {
+            guint alpha = src[_x] >> 24;
+
+            if (alpha == 0)
+            {
+                dest_data[_x * 4 + 0] = 0;
+                dest_data[_x * 4 + 1] = 0;
+                dest_data[_x * 4 + 2] = 0;
+            }
+            else
+            {
+                dest_data[_x * 4 + 0] = (((src[_x] & 0xff0000) >> 16) * 255 + alpha / 2) / alpha;
+                dest_data[_x * 4 + 1] = (((src[_x] & 0x00ff00) >>  8) * 255 + alpha / 2) / alpha;
+                dest_data[_x * 4 + 2] = (((src[_x] & 0x0000ff) >>  0) * 255 + alpha / 2) / alpha;
+            }
+            dest_data[_x * 4 + 3] = alpha;
+        }
+        src_data += src_stride;
+        dest_data += dest_stride;
+    }
+#endif
+    cairo_surface_destroy(s);
+    *x = area.x;
+    *y = area.y;
+    return pixbuf;
+}
+
+static void on_drag_begin (GtkWidget *widget, GdkDragContext *drag_context)
+{
+    /* GTK auto-dragging started a drag, update state */
+    FmDesktop *desktop = FM_DESKTOP(widget);
+    gint x, y, icon_x, icon_y;
+    GdkPixbuf *pix = _create_drag_icon(desktop, &x, &y);
+
+    desktop->dragging = TRUE;
+
+    /* FIXME: set drag cursor to selected items */
+    if (pix)
+    {
+        icon_x = desktop->drag_start_x - x;
+        icon_y = desktop->drag_start_y - y;
+        gtk_drag_set_icon_pixbuf(drag_context, pix, icon_x, icon_y);
+        g_object_unref(pix);
+    }
+
+    queue_layout_items(desktop);
+}
+
 static void on_dnd_src_data_get(FmDndSrc* ds, FmDesktop* desktop)
 {
     FmFileInfoList* files = _dup_selected_files(FM_FOLDER_VIEW(desktop));
@@ -4677,6 +4842,10 @@ static GObject* fm_desktop_constructor(GType type, guint n_construct_properties,
 
     /* init dnd support */
     self->dnd_src = fm_dnd_src_new((GtkWidget*)self);
+#if !FM_CHECK_VERSION(1, 2, 1)
+    /* FIXME: override pre-1.2.1 handler from FmDndSrc to allow icon change */
+    g_signal_connect_after(self, "drag-begin", G_CALLBACK(on_drag_begin), NULL);
+#endif
     /* add our own targets */
     fm_dnd_src_add_targets((GtkWidget*)self, dnd_targets, G_N_ELEMENTS(dnd_targets));
     g_signal_connect(self->dnd_src, "data-get", G_CALLBACK(on_dnd_src_data_get), self);
@@ -4761,6 +4930,9 @@ static void fm_desktop_class_init(FmDesktopClass *klass)
     widget_class->drag_drop = on_drag_drop;
     widget_class->drag_data_received = on_drag_data_received;
     widget_class->drag_leave = on_drag_leave;
+#if FM_CHECK_VERSION(1, 2, 1)
+    widget_class->drag_begin = on_drag_begin;
+#endif
     /* widget_class->drag_data_get = on_drag_data_get; */
 
     if(XInternAtoms(gdk_x11_get_default_xdisplay(), atom_names,
