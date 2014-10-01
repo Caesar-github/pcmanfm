@@ -16,7 +16,7 @@ Package: pcmanfm
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends:
- gvfs-backends, gvfs-fuse,
+ gvfs-backends, gvfs-fuse [!hurd-any],
  policykit-1-gnome | mate-polkit | lxpolkit (<< 0.4.9),
  lxde-icon-theme | gnome-icon-theme | oxygen-icon-theme | tango-icon-theme
 Description: extremely fast and lightweight file manager
