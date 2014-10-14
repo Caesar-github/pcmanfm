@@ -1,3 +1,14 @@
+pcmanfm (1.2.3-1) unstable; urgency=low
+
+  * Adding polkit agent to Recommends, mounting disks will require it.
+  * Restricting dependency on gvfs-fuse to [!hurd-any].
+  * Bump Standards-Version to 3.9.6.
+  * Merging upstream version 1.2.3.
+  * Adding lintian-overrides files with required comments.
+  * Setting NEWS file as ustream changelog (satisfy lintian notice).
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Tue, 14 Oct 2014 21:57:37 +0300
+
 pcmanfm (1.2.2-1) unstable; urgency=low
 
   * Merging upstream version 1.2.2 (Closes: #744123).
