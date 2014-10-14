@@ -280,6 +280,7 @@ ui_in_files = \
 	$(NULL)
 
 ui_DATA = $(ui_in_files:.glade=.ui)
+CLEANFILES = about.ui
 EXTRA_DIST = \
 	$(ui_SOURCES) \
 	$(ui_DATA) \
@@ -408,6 +409,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
