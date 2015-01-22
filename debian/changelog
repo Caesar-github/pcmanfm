@@ -1,3 +1,11 @@
+pcmanfm (1.2.3-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add code to transition /usr/share/doc/pcmanfm-dbg from directory to
+    symlink (Closes: #775418).
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Thu, 22 Jan 2015 21:56:10 +0100
+
 pcmanfm (1.2.3-1) unstable; urgency=low
 
   * Adding polkit agent to Recommends, mounting disks will require it.
