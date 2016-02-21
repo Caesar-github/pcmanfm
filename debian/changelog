@@ -1,3 +1,12 @@
+pcmanfm (1.2.4-1) unstable; urgency=medium
+
+  * Merging upstream version 1.2.4.
+  * Changing Maintainer e-mail to Alioth based one.
+  * Bump Standards-Version to 3.9.7.
+  * Removing the menu file which duplicates desktop entry command.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sun, 21 Feb 2016 12:58:40 +0200
+
 pcmanfm (1.2.3-1.1) unstable; urgency=medium
 
   * Non-maintainer upload.
