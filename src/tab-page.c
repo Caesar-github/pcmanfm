@@ -1,7 +1,7 @@
 //      fm-tab-page.c
 //
 //      Copyright 2011 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
-//      Copyright 2012-2014 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
+//      Copyright 2012-2015 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
 //
 //      This program is free software; you can redistribute it and/or modify
 //      it under the terms of the GNU General Public License as published by
@@ -193,6 +193,12 @@ static void fm_tab_page_finalize(GObject *object)
 
 static void free_folder(FmTabPage* page)
 {
+    /* page might be just loaded so stop updating it in any case */
+    if(page->update_scroll_id)
+    {
+        g_source_remove(page->update_scroll_id);
+        page->update_scroll_id = 0;
+    }
     if(page->folder)
     {
         g_signal_handlers_disconnect_by_func(page->folder, on_folder_start_loading, page);
@@ -607,10 +613,15 @@ static void on_folder_start_loading(FmFolder* folder, FmTabPage* page)
 static gboolean update_scroll(gpointer data)
 {
     FmTabPage* page = data;
-    GtkScrolledWindow* scroll = GTK_SCROLLED_WINDOW(page->folder_view);
+    GtkScrolledWindow* scroll;
 #if !FM_CHECK_VERSION(1, 0, 2)
     const FmNavHistoryItem* item;
+#endif
 
+    if (g_source_is_destroyed(g_main_current_source()))
+        return FALSE;
+    scroll = GTK_SCROLLED_WINDOW(page->folder_view);
+#if !FM_CHECK_VERSION(1, 0, 2)
     item = fm_nav_history_get_cur(page->nav_history);
     /* scroll to recorded position */
     gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(scroll), item->scroll_pos);
@@ -662,8 +673,9 @@ static void on_folder_finish_loading(FmFolder* folder, FmTabPage* page)
 
     // fm_path_entry_set_path(entry, path);
     /* delaying scrolling since drawing folder view is delayed */
-    if(!page->update_scroll_id)
-        page->update_scroll_id = gdk_threads_add_timeout(50, update_scroll, page);
+    if (page->update_scroll_id)
+        g_source_remove(page->update_scroll_id);
+    page->update_scroll_id = gdk_threads_add_timeout(50, update_scroll, page);
 
     /* update status bar */
     /* update status text */
@@ -816,7 +828,7 @@ static void update_files_popup(FmFolderView* fv, GtkWindow* win,
     for(l = fm_file_info_list_peek_head_link(files); l; l = l->next)
         if(!fm_file_info_is_dir(l->data))
             return; /* actions are valid only if all selected are directories */
-        else if (!fm_file_info_is_native(l->data))
+        else if (!pcmanfm_can_open_path_in_terminal(fm_file_info_get_path(l->data)))
             all_native = FALSE;
     g_object_set_qdata_full(G_OBJECT(act_grp), popup_qdata,
                             fm_file_info_list_ref(files),
@@ -867,7 +879,7 @@ void _update_sidepane_popup(FmSidePane* sp, GtkUIManager* ui,
                                  G_N_ELEMENTS(folder_menu_actions), win);
     /* we use the same XML for simplicity */
     gtk_ui_manager_add_ui_from_string(ui, folder_menu_xml, -1, NULL);
-    if (!fm_file_info_is_native(file))
+    if (!pcmanfm_can_open_path_in_terminal(fm_file_info_get_path(file)))
         gtk_action_set_visible(gtk_action_group_get_action(act_grp, "Term"), FALSE);
 }
 #endif

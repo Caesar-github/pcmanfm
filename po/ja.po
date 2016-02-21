@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: PcmanFM 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-22 00:33+0200\n"
-"PO-Revision-Date: 2014-01-25 01:30+0000\n"
-"Last-Translator: Hironao <hirkmt@gmail.com>\n"
+"PO-Revision-Date: 2015-05-04 04:36+0000\n"
+"Last-Translator: rago1975 <take1975@kumamoto.email.ne.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.5.0\n"
-"X-POOTLE-MTIME: 1390613407.0\n"
+"X-Generator: Pootle 2.7\n"
+"X-POOTLE-MTIME: 1430714188.000000\n"
 
 #: ../data/ui/about.glade.in.h:1
 msgid "Copyright (C) 2009 - 2014"
@@ -217,7 +217,7 @@ msgstr "デフォルトのドロップの動作(_T):"
 
 #: ../data/ui/pref.glade.h:15
 msgid "\"_Smart shortcut\" auto-action on drop to Desktop folder"
-msgstr "デスクトップへのドロップについては実行するアクションを自動で判断する"
+msgstr "\"スマートショートカット（_S）\" デスクトップフォルダに自動的にドロップする"
 
 #: ../data/ui/pref.glade.h:16
 msgid ""
@@ -319,7 +319,7 @@ msgstr "タブバーを常に表示する(_W)"
 
 #: ../data/ui/pref.glade.h:42
 msgid "_Maximum width of tab label:"
-msgstr "タブのラベルの最大幅:"
+msgstr "タブのラベルの最大幅（_M）:"
 
 #. Use genitive case here, context is: width is XXX characters
 #: ../data/ui/pref.glade.h:44
@@ -943,7 +943,7 @@ msgstr "ツールバーの表示(_S)"
 
 #: ../src/main-win-ui.c:278
 msgid "Show 'New _Window' Button"
-msgstr "'新規ウィンドウ' ボタンを表示する"
+msgstr "'新規ウィンドウ（_W）' ボタンを表示する"
 
 #: ../src/main-win-ui.c:279
 msgid "Show 'New _Tab' Button"
@@ -1077,7 +1077,7 @@ msgid ""
 msgstr ""
 "Tab: フォルダ・ビュー -> サイド・ペイン -> ツールバーへとフォーカスを循環させる\n"
 "Shift+Tab: ツールバー -> サイド・ペイン -> フォルダ・ビューへとフォーカスを循環させる\n"
-"F6: サイド・ペインとフォルダ・ビューの間でフォーカスを切り替える\n"
+"F6: サイド・ペイン<->フォルダ・ビューの間でフォーカスを切り替える\n"
 "F8: サイド・ペインとフォルダ・ビューの間の境界線をフォーカスする\n"
 "F10: メイン/メニューを開く\n"
 "Ctrl+L or Alt+D: パス・バーへフォーカスを移す"

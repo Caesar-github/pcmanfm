@@ -7,16 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pcmanfm 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-09 09:41+0100\n"
-"PO-Revision-Date: 2013-06-05 09:38+0900\n"
-"Last-Translator: Gheyret <gheyret@gmail.com>\n"
+"POT-Creation-Date: 2014-01-22 00:33+0200\n"
+"PO-Revision-Date: 2014-12-04 16:02+0000\n"
+"Last-Translator: system user <>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: ug\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.0.5\n"
+"X-Generator: Pootle 2.7\n"
+"X-POOTLE-MTIME: 1417708950.000000\n"
 
 #: ../data/ui/about.glade.in.h:1
 #, fuzzy
@@ -397,8 +398,8 @@ msgstr "<b>ئاپتوماتىك ئېگەرلەش</b>"
 #: ../data/ui/pref.glade.h:57
 msgid "_Mount mountable volumes automatically on program startup"
 msgstr ""
-"پروگرامما باشلانغاندا ئېگەرلىگىلى بولىدىغان دىسكىلارنى ئاپتوماتىك "
-"ئېگەرلىسۇن(_M)"
+"پروگرامما باشلانغاندا ئېگەرلىگىلى بولىدىغان دىسكىلارنى ئاپتوماتىك ئېگەرلىسۇن"
+"(_M)"
 
 #: ../data/ui/pref.glade.h:58
 msgid "Mo_unt removable media automatically when they are inserted"
@@ -407,20 +408,19 @@ msgstr "يۆتكىلىشچان ۋاسىتە قىستۇرۇلغان ھامان ئ
 #: ../data/ui/pref.glade.h:59
 msgid "_Show available options for removable media when they are inserted"
 msgstr ""
-"يۆتكىلىشچان ۋاسىتە قىستۇرۇلغاندا ئىشلەتكىلى بولىدىغان تاللانمىلارنى "
-"كۆرسەتسۇن(_S)"
+"يۆتكىلىشچان ۋاسىتە قىستۇرۇلغاندا ئىشلەتكىلى بولىدىغان تاللانمىلارنى كۆرسەتسۇن"
+"(_S)"
 
 #: ../data/ui/pref.glade.h:60
 #, fuzzy
 msgid "Do_n't show available options for those media types:"
 msgstr ""
-"يۆتكىلىشچان ۋاسىتە قىستۇرۇلغاندا ئىشلەتكىلى بولىدىغان تاللانمىلارنى "
-"كۆرسەتسۇن(_S)"
+"يۆتكىلىشچان ۋاسىتە قىستۇرۇلغاندا ئىشلەتكىلى بولىدىغان تاللانمىلارنى كۆرسەتسۇن"
+"(_S)"
 
 #: ../data/ui/pref.glade.h:61
-#, fuzzy
 msgid "_Remove selected"
-msgstr "%d تۈر تاللاندى"
+msgstr "تاللانغاننى چىقىرىۋەت(_R)"
 
 #: ../data/ui/pref.glade.h:62
 msgid "_Open mounted removable media in new tab instead of new window"
@@ -678,9 +678,8 @@ msgid "Snap to _Grid"
 msgstr "سېتكىغا توغرىلا(_G)"
 
 #: ../src/desktop.c:946
-#, fuzzy
 msgid "Activate file"
-msgstr "<سۈرەت ھۆججىتى>"
+msgstr "ھۆججەتنى ئاكتىپلا"
 
 #: ../src/desktop.c:948
 #, fuzzy
@@ -688,9 +687,8 @@ msgid "Show file menu"
 msgstr "يوشۇرۇنلىرىنى كۆرسەت(_N)"
 
 #: ../src/desktop.c:1364
-#, fuzzy
 msgid "Show desktop menu"
-msgstr "<b>ئۈستەلئۈستى سىنبەلگىسىنى كۆرسىتىش</b>"
+msgstr "ئۈستەلئۈستى تىزىملىكىنى كۆرسىتىدۇ"
 
 #. FIXME: set name by monitor
 #: ../src/desktop.c:1436
@@ -1110,12 +1108,8 @@ msgid "You are in super user mode"
 msgstr "سىز ئالىي ئىشلەتكۈچى ھالىتىدە"
 
 #: ../src/main-win.c:1134
-#, fuzzy
 msgid "Lightweight file manager\n"
-msgstr ""
-"يېنىك ھۆججەت باشقۇرغۇ\n"
-"\n"
-"ئاپتورى: Hon Jen Yee (PCMan)"
+msgstr "يېنىك ھۆججەت باشقۇرغۇ\n"
 
 #: ../src/main-win.c:1139
 #, c-format
@@ -1123,12 +1117,10 @@ msgid "using LibFM ver. %s\n"
 msgstr ""
 
 #: ../src/main-win.c:1141
-#, fuzzy
 msgid ""
 "\n"
 "Developed by Hon Jen Yee (PCMan)"
 msgstr ""
-"يېنىك ھۆججەت باشقۇرغۇ\n"
 "\n"
 "ئاپتورى: Hon Jen Yee (PCMan)"
 
@@ -1235,13 +1227,12 @@ msgstr "FILE"
 
 #. don't translate list of modes in description, please
 #: ../src/pcmanfm.c:89
-#, fuzzy
 msgid ""
 "Set mode of desktop wallpaper. MODE=(color|stretch|fit|crop|center|tile|"
 "screen)"
 msgstr ""
-"ئۈستەلئۈستى تام قەغىزىنىڭ ھالىتىنى بەلگىلەش. <MODE>=(color|stretch|fit|"
-"center|tile)"
+"ئۈستەلئۈستى تام قەغىزىنىڭ ھالىتىنى "
+"بەلگىلەش.MODE=(color|stretch|fit|crop|center|tile|screen)"
 
 #: ../src/pcmanfm.c:89
 msgid "MODE"
@@ -1276,7 +1267,11 @@ msgstr "ROLE"
 msgid "[FILE1, FILE2,...]"
 msgstr "[FILE1, FILE2,...]"
 
-#: ../src/pcmanfm.c:585
+#: ../src/pcmanfm.c:352
+msgid "Desktop manager is not active."
+msgstr ""
+
+#: ../src/pcmanfm.c:598
 msgid "Terminal emulator is not set."
 msgstr "تېرمىنال تەقلىدلىگۈچى بەلگىلەنمىگەن."
 

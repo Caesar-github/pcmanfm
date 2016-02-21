@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: pcmanfm 1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-22 00:33+0200\n"
-"PO-Revision-Date: 2014-08-20 10:42+0000\n"
+"PO-Revision-Date: 2015-03-24 07:20+0000\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -15,8 +15,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.6.0-rc1\n"
-"X-POOTLE-MTIME: 1408531360.000000\n"
+"X-Generator: Pootle 2.7\n"
+"X-POOTLE-MTIME: 1427181601.000000\n"
 
 #: ../data/ui/about.glade.in.h:1
 msgid "Copyright (C) 2009 - 2014"
@@ -568,7 +568,7 @@ msgstr "Detectando..."
 
 #: ../data/ui/autorun.glade.h:5
 msgid "Please select the action you want to perform:"
-msgstr "Realizar _sempre esta acción neste tipo de medio"
+msgstr "Seleccione a acción que quere realizar:"
 
 #: ../data/ui/autorun.glade.h:6
 msgid "_Always perform this action on this media type"
@@ -725,7 +725,7 @@ msgstr "Mover ao _lixo"
 
 #: ../src/main-win-ui.c:203
 msgid "Copy Pat_h(s)"
-msgstr "Copiar a(s) ruta(s)"
+msgstr "Copiar a(s) _ruta(s)"
 
 #: ../src/main-win-ui.c:204
 msgid "R_ename..."
@@ -745,7 +745,7 @@ msgstr "_Mover a..."
 
 #: ../src/main-win-ui.c:208
 msgid "Copy to_..."
-msgstr "C_opiar a..."
+msgstr "Copiar a_..."
 
 #: ../src/main-win-ui.c:209
 msgid "Propertie_s"
@@ -886,7 +886,7 @@ msgstr "Ir á lista de lugares na rede"
 
 #: ../src/main-win-ui.c:241
 msgid "_Go to Location..."
-msgstr "Ir á localización"
+msgstr "_Ir á localización"
 
 #: ../src/main-win-ui.c:242
 msgid "_Connect to Server..."
@@ -930,7 +930,7 @@ msgstr "Abrir o diálogo de buscas"
 
 #: ../src/main-win-ui.c:252
 msgid "_Run a Command in Current Folder..."
-msgstr "Executar a _orde no cartafol actual... "
+msgstr "Executar a _orde no cartafol actual..."
 
 #. Note to translators: "Mingle..." means "Do not put folders before files" but make the translation as short as possible, please!
 #: ../src/main-win-ui.c:267

@@ -3,7 +3,7 @@
  *
  *      This file is a part of the PCManFM project.
  *
- *      Copyright 2013-2014 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
+ *      Copyright 2013-2016 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ static void on_response(GtkDialog *dialog, gint resp, ConnectDlg *dlg)
     GString *str;
     GtkTreeIter iter;
     char *scheme = NULL;
-    const char *text;
+    const char *text, *tmp;
     FmPath *path;
     int def_port, used_port;
 
@@ -56,11 +56,6 @@ static void on_response(GtkDialog *dialog, gint resp, ConnectDlg *dlg)
     {
         /* make an URI from the data */
         str = g_string_new(scheme);
-        g_free(scheme);
-        g_string_append(str, "://");
-        if (gtk_toggle_button_get_active(dlg->user_user))
-            g_string_append_printf(str, "%s@", gtk_entry_get_text(dlg->login_entry));
-        g_string_append(str, gtk_entry_get_text(dlg->server_host));
         if (strcmp(scheme, "sftp") == 0)
             def_port = 22;
         else if (strcmp(scheme, "ftp") == 0)
@@ -69,6 +64,26 @@ static void on_response(GtkDialog *dialog, gint resp, ConnectDlg *dlg)
             def_port = 80;
         else
             def_port = -1;
+        g_free(scheme);
+        /* let user explicitly enter scheme in the server field */
+        text = gtk_entry_get_text(dlg->server_host);
+        tmp = g_strstr_len(text, -1, "://");
+        if (tmp != NULL)
+        {
+            /* support secure webdav here, see SF #992 */
+            if (def_port == 80)
+                if (g_str_has_prefix(text, "https:") || g_str_has_prefix(text, "davs:"))
+                {
+                    if (gtk_spin_button_get_value(dlg->server_port) != 80.0)
+                        def_port = 443;
+                    g_string_assign(str, "davs");
+                }
+            text = tmp + 3; /* after :// */
+        }
+        g_string_append(str, "://");
+        if (gtk_toggle_button_get_active(dlg->user_user))
+            g_string_append_printf(str, "%s@", gtk_entry_get_text(dlg->login_entry));
+        g_string_append(str, text);
         used_port = (int)gtk_spin_button_get_value(dlg->server_port);
         if (def_port != used_port)
             g_string_append_printf(str, ":%d", used_port);
@@ -191,6 +206,26 @@ static void on_user_type(GtkToggleButton *user_anonymous, ConnectDlg *dlg)
     gtk_widget_set_sensitive(dlg->ok, ready);
 }
 
+static void on_login_entry(GtkEditable *editable, ConnectDlg *dlg)
+{
+    const char *text = gtk_entry_get_text(GTK_ENTRY(editable));
+    gboolean ready;
+
+    /* disable OK if entry is empty */
+    if (!text || !text[0])
+        ready = FALSE;
+    /* disable OK if type not selected */
+    else if (gtk_combo_box_get_active(dlg->server_type) == -1)
+        ready = FALSE;
+    /* enable OK if server host isn't empty */
+    else
+    {
+        text = gtk_entry_get_text(dlg->server_host);
+        ready = (text && text[0] != '\0');
+    }
+    gtk_widget_set_sensitive(dlg->ok, ready);
+}
+
 void open_connect_dialog(GtkWindow *parent)
 {
     GtkBuilder *builder = gtk_builder_new();
@@ -211,6 +246,7 @@ void open_connect_dialog(GtkWindow *parent)
     g_signal_connect(dlg->user_anonymous, "toggled", G_CALLBACK(on_user_type), dlg);
     dlg->user_user = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "user_user"));
     dlg->login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
+    g_signal_connect(dlg->login_entry, "changed", G_CALLBACK(on_login_entry), dlg);
     g_object_unref(builder);
 
     pcmanfm_ref();

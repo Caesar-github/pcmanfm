@@ -2,7 +2,7 @@
  *      desktop.c
  *
  *      Copyright 2010 - 2012 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
- *      Copyright 2012-2014 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
+ *      Copyright 2012-2015 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -203,7 +203,7 @@ static void calc_item_size(FmDesktop* desktop, FmDesktopItem* item, GdkPixbuf* i
     }
     item->icon_rect.x = item->area.x + (desktop->cell_w - item->icon_rect.width) / 2;
     item->icon_rect.y = item->area.y + desktop->ypad + (fm_config->big_icon_size - item->icon_rect.height) / 2;
-    item->icon_rect.height += desktop->spacing;
+    item->icon_rect.height += desktop->spacing; // FIXME: this is probably wrong
 
     /* text label rect */
     pango_layout_set_text(desktop->pl, NULL, 0);
@@ -216,9 +216,9 @@ static void calc_item_size(FmDesktop* desktop, FmDesktopItem* item, GdkPixbuf* i
 
     /* FIXME: RTL */
     item->text_rect.x = item->area.x + (desktop->cell_w - rc2.width - 4) / 2;
-    item->text_rect.y = item->area.y + desktop->ypad + fm_config->big_icon_size + desktop->spacing + rc2.y;
+    item->text_rect.y = item->area.y + desktop->ypad + fm_config->big_icon_size + desktop->spacing;
     item->text_rect.width = rc2.width + 4;
-    item->text_rect.height = rc2.height + 4;
+    item->text_rect.height = rc2.y + rc2.height + 4;
     item->area.width = (desktop->cell_w + MAX(item->icon_rect.width, item->text_rect.width)) / 2;
     item->area.height = item->text_rect.y + item->text_rect.height - item->area.y;
 }
@@ -1779,13 +1779,18 @@ _next_position_rtl:
 static gboolean on_idle_layout(FmDesktop* desktop)
 {
     desktop->idle_layout = 0;
+    desktop->layout_pending = FALSE;
     layout_items(desktop);
     return FALSE;
 }
 
 static void queue_layout_items(FmDesktop* desktop)
 {
-    if(0 == desktop->idle_layout)
+    /* don't try to layout items until config is loaded,
+       this may be cause of the bug #927 on SF.net */
+    if (!gtk_widget_get_realized(GTK_WIDGET(desktop)))
+        desktop->layout_pending = TRUE;
+    else if (0 == desktop->idle_layout)
         desktop->idle_layout = gdk_threads_add_idle((GSourceFunc)on_idle_layout, desktop);
 }
 
@@ -1824,7 +1829,7 @@ static void paint_item(FmDesktop* self, FmDesktopItem* item, cairo_t* cr, GdkRec
 
     /* FIXME: do we need to cache this? */
     text_x = item->area.x + (self->cell_w - self->text_w)/2 + 2;
-    text_y = item->icon_rect.y + item->icon_rect.height + 2;
+    text_y = item->text_rect.y + 2;
 
     if(item->is_selected || item == self->drop_hilight) /* draw background for text label */
     {
@@ -1888,7 +1893,7 @@ static void paint_item(FmDesktop* self, FmDesktopItem* item, cairo_t* cr, GdkRec
 static void redraw_item(FmDesktop* desktop, FmDesktopItem* item)
 {
     GdkRectangle rect;
-    gdk_rectangle_union(&item->icon_rect, &item->text_rect, &rect);
+    get_item_rect(item, &rect);
     --rect.x;
     --rect.y;
     rect.width += 2;
@@ -2860,7 +2865,7 @@ static void on_snap_to_grid(GtkAction* act, gpointer user_data)
 
 static gboolean is_point_in_rect(GdkRectangle* rect, int x, int y)
 {
-    return rect->x < x && x < (rect->x + rect->width) && y > rect->y && y < (rect->y + rect->height);
+    return x >= rect->x && x < (rect->x + rect->width) && y >= rect->y && y < (rect->y + rect->height);
 }
 
 static FmDesktopItem* hit_test(FmDesktop* self, GtkTreeIter *it, int x, int y)
@@ -2873,11 +2878,16 @@ static FmDesktopItem* hit_test(FmDesktop* self, GtkTreeIter *it, int x, int y)
     model = GTK_TREE_MODEL(self->model);
     if(model && gtk_tree_model_get_iter_first(model, it)) do
     {
+        GdkRectangle icon_rect;
         item = fm_folder_model_get_item_userdata(self->model, it);
         /* we cannot drop dragged items onto themselves */
         if (item->is_selected && self->dragging)
             continue;
-        if(is_point_in_rect(&item->icon_rect, x, y)
+        /* SF bug #963: icon_rect and text_rect may be not contiguous,
+           so let expand icon test area up to text_rect */
+        icon_rect = item->icon_rect;
+        icon_rect.height = item->text_rect.y - icon_rect.y;
+        if(is_point_in_rect(&icon_rect, x, y)
          || is_point_in_rect(&item->text_rect, x, y))
             return item;
     }
@@ -3224,6 +3234,13 @@ static void on_size_allocate(GtkWidget* w, GtkAllocation* alloc)
     /* scale the wallpaper */
     if(gtk_widget_get_realized(w))
     {
+#if GTK_CHECK_VERSION(3, 0, 0)
+        /* bug SF#958: with GTK 3.8+ font is reset to default after realizing
+           so let enforce font description on it right away */
+        PangoFontDescription *font_desc = pango_font_description_from_string(self->conf.desktop_font);
+        pango_context_set_font_description(pc, font_desc);
+        pango_font_description_free(font_desc);
+#endif
         /* bug #3614866: after monitor geometry was changed we need to redraw
            the background invalidating all the cache */
         _clear_bg_cache(self);
@@ -3297,9 +3314,12 @@ static gboolean on_button_press(GtkWidget* w, GdkEventButton* evt)
 
     if(evt->type == GDK_BUTTON_PRESS)
     {
+        /* ignore another buttons while some is in progress */
+        if (self->button_pressed == 0)
+            self->button_pressed = evt->button;
         if(evt->button == 1)  /* left button */
         {
-            self->button_pressed = TRUE;    /* store button state for drag & drop */
+            /* store button state for drag & drop */
             self->drag_start_x = evt->x;
             self->drag_start_y = evt->y;
         }
@@ -3392,10 +3412,15 @@ static gboolean on_button_press(GtkWidget* w, GdkEventButton* evt)
         fm_folder_view_item_clicked(FM_FOLDER_VIEW(self), tp, clicked);
         if(tp)
             gtk_tree_path_free(tp);
+        /* SF bug #929: after click the tooltip is still set to the item name */
+        self->hover_item = NULL;
     }
     /* forward the event to root window */
-    else if(evt->button != 1)
+    else if(evt->button != 1 && evt->button == self->button_pressed)
+    {
+        self->forward_pending = TRUE;
         forward_event_to_rootwin(gtk_widget_get_screen(w), (GdkEvent*)evt);
+    }
 
     if(! gtk_widget_has_focus(w))
     {
@@ -3408,10 +3433,6 @@ static gboolean on_button_press(GtkWidget* w, GdkEventButton* evt)
 static gboolean on_button_release(GtkWidget* w, GdkEventButton* evt)
 {
     FmDesktop* self = (FmDesktop*)w;
-    GtkTreeIter it;
-    FmDesktopItem* clicked_item = hit_test(self, &it, evt->x, evt->y);
-
-    self->button_pressed = FALSE;
 
     if(self->rubber_bending)
     {
@@ -3425,17 +3446,21 @@ static gboolean on_button_release(GtkWidget* w, GdkEventButton* evt)
     }
     else if(fm_config->single_click && evt->button == 1)
     {
+        GtkTreeIter it;
+        FmDesktopItem* clicked_item = hit_test(self, &it, evt->x, evt->y);
         if(clicked_item)
-        {
             /* left single click */
             fm_launch_file_simple(GTK_WINDOW(w), NULL, clicked_item->fi, pcmanfm_open_folder, w);
-            return TRUE;
-        }
     }
 
     /* forward the event to root window */
-    if(! clicked_item)
-        forward_event_to_rootwin(gtk_widget_get_screen(w), (GdkEvent*)evt);
+    if (self->button_pressed == evt->button)
+    {
+        if (self->forward_pending)
+            forward_event_to_rootwin(gtk_widget_get_screen(w), (GdkEvent*)evt);
+        self->button_pressed = 0;
+        self->forward_pending = FALSE;
+    }
 
     return TRUE;
 }
@@ -4205,6 +4230,9 @@ static void on_realize(GtkWidget* w)
     FmDesktop* self = (FmDesktop*)w;
     PangoFontDescription *font_desc;
     PangoContext* pc;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    char *css_data;
+#endif
 
     GTK_WIDGET_CLASS(fm_desktop_parent_class)->realize(w);
     gtk_window_set_skip_pager_hint(GTK_WINDOW(w), TRUE);
@@ -4229,6 +4257,18 @@ static void on_realize(GtkWidget* w)
     pc = gtk_widget_get_pango_context(w);
     pango_context_set_font_description(pc, font_desc);
     pango_font_description_free(font_desc);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    css_data = g_strdup_printf("FmDesktop {\n"
+                                   "background-color: #%02x%02x%02x\n"
+                               "}",
+                               self->conf.desktop_bg.red/256,
+                               self->conf.desktop_bg.green/256,
+                               self->conf.desktop_bg.blue/256);
+    gtk_css_provider_load_from_data(self->css, css_data, -1, NULL);
+    g_free(css_data);
+#endif
+    if (self->layout_pending)
+        queue_layout_items(self);
 }
 
 static gboolean on_focus_in(GtkWidget* w, GdkEventFocus* evt)
@@ -4589,6 +4629,44 @@ static FmJobErrorAction on_folder_error(FmFolder* folder, GError* err, FmJobErro
 }
 
 
+#if !GTK_CHECK_VERSION(3, 0, 0)
+/* ---------------------------------------------------------------------
+   We should not follow background changes on the style so we create
+   a style class for the desktop with dummy set background operator.
+   For GTK+ 3.0 we add a style provider with high priority instead. */
+
+static void _dummy_set_background(GtkStyle *style, GdkWindow *window, GtkStateType state_type)
+{
+}
+
+#define FM_DESKTOP_TYPE_STYLE    (fm_desktop_style_get_type())
+
+typedef struct _FmDesktopStyle FmDesktopStyle;
+struct _FmDesktopStyle
+{
+    GtkStyle parent;
+};
+
+typedef struct _FmDesktopStyleClass FmDesktopStyleClass;
+struct _FmDesktopStyleClass
+{
+    GtkStyleClass parent_class;
+};
+
+G_DEFINE_TYPE(FmDesktopStyle, fm_desktop_style, GTK_TYPE_STYLE)
+
+static void fm_desktop_style_class_init(FmDesktopStyleClass *klass)
+{
+    GtkStyleClass *style_class = GTK_STYLE_CLASS(klass);
+
+    style_class->set_background = _dummy_set_background;
+}
+
+static void fm_desktop_style_init(FmDesktopStyle *self)
+{
+}
+#endif
+
 /* ---------------------------------------------------------------------
     FmDesktop class main handlers */
 
@@ -4770,6 +4848,8 @@ static void fm_desktop_destroy(GtkObject *object)
     }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
+    g_object_unref(self->css);
+
     GTK_WIDGET_CLASS(fm_desktop_parent_class)->destroy(object);
 #else
     GTK_OBJECT_CLASS(fm_desktop_parent_class)->destroy(object);
@@ -4778,6 +4858,16 @@ static void fm_desktop_destroy(GtkObject *object)
 
 static void fm_desktop_init(FmDesktop *self)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    self->css = gtk_css_provider_new();
+    gtk_style_context_add_provider(gtk_widget_get_style_context((GtkWidget*)self),
+                                   GTK_STYLE_PROVIDER(self->css),
+                                   GTK_STYLE_PROVIDER_PRIORITY_USER);
+#else
+    GtkStyle *style = g_object_new(FM_DESKTOP_TYPE_STYLE, NULL);
+    gtk_widget_set_style((GtkWidget*)self, style);
+    g_object_unref(style);
+#endif
 }
 
 /* we should have a constructor to handle parameters */
@@ -5271,6 +5361,14 @@ static void on_bg_color_set(GtkColorButton *btn, FmDesktop *desktop)
     gtk_color_button_get_color(btn, &new_val);
     if (!gdk_color_equal(&desktop->conf.desktop_bg, &new_val))
     {
+#if GTK_CHECK_VERSION(3, 0, 0)
+        char *css_data = g_strdup_printf("FmDesktop {\n"
+                                             "background-color: #%02x%02x%02x\n"
+                                         "}", new_val.red/256, new_val.green/256,
+                                         new_val.blue/256);
+        gtk_css_provider_load_from_data(desktop->css, css_data, -1, NULL);
+        g_free(css_data);
+#endif
         desktop->conf.desktop_bg = new_val;
         queue_config_save(desktop);
         update_background(desktop, 0);
@@ -5610,10 +5708,10 @@ void fm_desktop_preference(GtkAction *act, FmDesktop *desktop)
                          G_CALLBACK(on_desktop_folder_set_toggled), data->chooser);
         /* the desktop folder chooser dialog */
         if (desktop->model)
-            path_str = fm_path_to_str(fm_folder_model_get_folder_path(desktop->model));
+            path_str = fm_path_to_uri(fm_folder_model_get_folder_path(desktop->model));
         else
-            path_str = fm_path_to_str(fm_path_get_desktop());
-        gtk_file_chooser_set_filename(data->chooser, path_str);
+            path_str = fm_path_to_uri(fm_path_get_desktop());
+        gtk_file_chooser_set_current_folder_uri(data->chooser, path_str);
         g_free(path_str);
         g_signal_connect(data->chooser, "file-set", G_CALLBACK(on_desktop_folder_set), data);
         g_signal_connect(data->chooser, "selection-changed", G_CALLBACK(on_desktop_folder_set), data);
