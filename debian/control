@@ -7,7 +7,7 @@ Uploaders:
 Build-Depends:
  debhelper (>= 9), intltool, pkg-config, libfm-gtk-dev (>= 1.2.0),
  libgtk2.0-dev
-Standards-Version: 3.9.7
+Standards-Version: 3.9.8
 Homepage: http://pcmanfm.sourceforge.net/
 Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/pcmanfm.git
 Vcs-Git: git://git.lxde.org/git/debian/pcmanfm.git
