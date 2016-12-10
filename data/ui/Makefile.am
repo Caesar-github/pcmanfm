@@ -14,7 +14,7 @@ ui_in_files= \
 	$(NULL)
 ui_DATA = $(ui_in_files:.glade=.ui)
 
-CLEANFILES = about.ui
+DISTCLEANFILES = $(ui_DATA) about.glade
 
 EXTRA_DIST = \
 	$(ui_SOURCES) \

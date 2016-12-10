@@ -1,3 +1,21 @@
+Changes on 1.2.5 since 1.2.4:
+
+* Removed options to Cut, Remove and Rename from context menu on mounted
+    drive on the desktop, user might accidentally recursively remove its
+    contents.
+
+* Removed 'Open in terminal' from context menu on folder on the desktop
+    that cannot be opened in terminal.
+
+* Fixed invalid unref on CSS provider (GTK+ 3.0).
+
+* Fixed unwanted unselection of items when right-clicked the desktop.
+
+* Fixed endless loop in desktop items placement in some corner cases.
+
+* Fixed spelling error in the manual page.
+
+
 Changes on 1.2.4 since 1.2.3:
 
 * Workarounded a bug in gtk_file_chooser_set_file() function (patch from

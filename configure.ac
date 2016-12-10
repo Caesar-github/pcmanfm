@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([pcmanfm], [1.2.4], [http://pcmanfm.sf.net/])
+AC_INIT([pcmanfm], [1.2.5], [http://pcmanfm.sf.net/])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign no-dist-gzip dist-xz])
 
 AC_CONFIG_HEADERS([config.h])
@@ -49,7 +49,7 @@ if test "$enable_debug" = "yes"; then
     CPPFLAGS="$CPPFLAGS -DG_ENABLE_DEBUG -O0 -g"
     case "$CC" in
     gcc*)
-        CPPFLAGS="$CPPFLAGS -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
+        CPPFLAGS="$CPPFLAGS -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -fno-common"
         ;;
     *)
         ;;

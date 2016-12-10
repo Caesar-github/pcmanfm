@@ -2,7 +2,7 @@
  *      desktop.c
  *
  *      Copyright 2010 - 2012 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
- *      Copyright 2012-2015 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
+ *      Copyright 2012-2016 Andriy Grytsenko (LStranger) <andrej@rep.kiev.ua>
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -150,6 +150,28 @@ static void on_disable(GtkAction* act, gpointer user_data);
 /* insert GtkUIManager XML definitions */
 #include "desktop-ui.c"
 
+#if FM_CHECK_VERSION(1, 2, 0)
+/* ---------------------------------------------------------------------
+    mounts handlers */
+
+#if FM_CHECK_VERSION(1, 2, 0)
+typedef struct
+{
+    GMount *mount; /* NULL for non-mounts */
+    FmPath *path;
+    FmFileInfo *fi;
+    FmFileInfoJob *job;
+} FmDesktopExtraItem;
+
+static FmDesktopExtraItem *documents = NULL;
+//static FmDesktopExtraItem *computer = NULL;
+static FmDesktopExtraItem *trash_can = NULL;
+//static FmDesktopExtraItem *applications = NULL;
+
+/* under GDK lock */
+static GSList *mounts = NULL;
+#endif
+
 
 /* ---------------------------------------------------------------------
     Items management and common functions */
@@ -173,9 +195,24 @@ static char* get_config_file(FmDesktop* desktop, gboolean create_dir)
 static inline FmDesktopItem* desktop_item_new(FmFolderModel* model, GtkTreeIter* it)
 {
     FmDesktopItem* item = g_slice_new0(FmDesktopItem);
+#if FM_CHECK_VERSION(1, 2, 0)
+    GSList *sl;
+#endif
     fm_folder_model_set_item_userdata(model, it, item);
     gtk_tree_model_get(GTK_TREE_MODEL(model), it, FM_FOLDER_MODEL_COL_INFO, &item->fi, -1);
     fm_file_info_ref(item->fi);
+#if FM_CHECK_VERSION(1, 2, 0)
+    if ((trash_can && trash_can->fi == item->fi) ||
+        (documents && documents->fi == item->fi))
+        item->is_special = TRUE;
+    else for (sl = mounts; sl; sl = sl->next)
+        if (((FmDesktopExtraItem *)sl->data)->fi == item->fi)
+        {
+            item->is_special = TRUE;
+            item->is_mount = TRUE;
+            break;
+        }
+#endif
     return item;
 }
 
@@ -494,26 +531,7 @@ static void copy_desktop_config(FmDesktopConfig *dst, FmDesktopConfig *src)
 
 }
 
-#if FM_CHECK_VERSION(1, 2, 0)
-/* ---------------------------------------------------------------------
-    mounts handlers */
-
-typedef struct
-{
-    GMount *mount; /* NULL for non-mounts */
-    FmPath *path;
-    FmFileInfo *fi;
-    FmFileInfoJob *job;
-} FmDesktopExtraItem;
-
-static FmDesktopExtraItem *documents = NULL;
-//static FmDesktopExtraItem *computer = NULL;
-static FmDesktopExtraItem *trash_can = NULL;
-//static FmDesktopExtraItem *applications = NULL;
-
 static GVolumeMonitor *vol_mon = NULL;
-/* under GDK lock */
-static GSList *mounts = NULL;
 
 static void _free_extra_item(FmDesktopExtraItem *item);
 
@@ -1721,17 +1739,18 @@ _next_position:
                 item->area.x = self->working_area.x + x;
                 item->area.y = self->working_area.y + y;
                 calc_item_size(self, item, icon);
-                while (self->working_area.y + y < item->area.y + item->area.height)
-                    y += self->cell_h;
-                if(y > bottom)
+                /* check if item does not fit into space that left */
+                if (item->area.y + item->area.height > bottom && y > self->ymargin)
                 {
                     x += self->cell_w;
                     y = self->ymargin;
+                    goto _next_position;
                 }
+                /* prepare position for next item */
+                while (self->working_area.y + y < item->area.y + item->area.height)
+                    y += self->cell_h;
                 /* check if this position is occupied by a fixed item */
-                /* or its height does not fit into space that left */
-                if(item->area.y + item->area.height > bottom ||
-                   is_pos_occupied(self, item))
+                if(is_pos_occupied(self, item))
                     goto _next_position;
             }
             if(icon)
@@ -1755,17 +1774,18 @@ _next_position_rtl:
                 item->area.x = self->working_area.x + x;
                 item->area.y = self->working_area.y + y;
                 calc_item_size(self, item, icon);
-                while (self->working_area.y + y < item->area.y + item->area.height)
-                    y += self->cell_h;
-                if(y > bottom)
+                /* check if item does not fit into space that left */
+                if (item->area.y + item->area.height > bottom && y > self->ymargin)
                 {
                     x -= self->cell_w;
                     y = self->ymargin;
+                    goto _next_position_rtl;
                 }
+                /* prepare position for next item */
+                while (self->working_area.y + y < item->area.y + item->area.height)
+                    y += self->cell_h;
                 /* check if this position is occupied by a fixed item */
-                /* or its height does not fit into space that left */
-                if(item->area.y + item->area.height > bottom ||
-                   is_pos_occupied(self, item))
+                if(is_pos_occupied(self, item))
                     goto _next_position_rtl;
             }
             if(icon)
@@ -2684,6 +2704,10 @@ static void fm_desktop_update_item_popup(FmFolderView* fv, GtkWindow* window,
     GList* sel_items, *l;
     GtkAction* act;
     gboolean all_fixed = TRUE, has_fixed = FALSE;
+    gboolean all_native = TRUE;
+#if FM_CHECK_VERSION(1, 2, 0)
+    gboolean has_extra = FALSE, has_mount = FALSE;
+#endif
 
     sel_items = get_selected_items(FM_DESKTOP(fv), NULL);
     for(l = sel_items; l; l=l->next)
@@ -2693,6 +2717,14 @@ static void fm_desktop_update_item_popup(FmFolderView* fv, GtkWindow* window,
             has_fixed = TRUE;
         else
             all_fixed = FALSE;
+        if (!pcmanfm_can_open_path_in_terminal(fm_file_info_get_path(item->fi)))
+            all_native = FALSE;
+#if FM_CHECK_VERSION(1, 2, 0)
+        if (item->is_special)
+            has_extra = TRUE;
+        if (item->is_mount)
+            has_mount = TRUE;
+#endif
     }
     g_list_free(sel_items);
 
@@ -2705,15 +2737,24 @@ static void fm_desktop_update_item_popup(FmFolderView* fv, GtkWindow* window,
         gtk_action_group_add_actions(act_grp, folder_menu_actions,
                                      G_N_ELEMENTS(folder_menu_actions), fv);
         gtk_ui_manager_add_ui_from_string(ui, folder_menu_xml, -1, NULL);
+        /* disable terminal for non-native folders */
+        act = gtk_action_group_get_action(act_grp, "Term");
+        gtk_action_set_visible(act, all_native);
     }
 #if FM_CHECK_VERSION(1, 2, 0)
-    if (fm_file_info_list_get_length(files) == 1 &&
-        ((trash_can && trash_can->fi == fi) ||
-         (documents && documents->fi == fi)))
+    if (has_extra)
     {
-        gtk_action_group_add_actions(act_grp, extra_item_menu_actions,
-                                     G_N_ELEMENTS(extra_item_menu_actions), fv);
-        gtk_ui_manager_add_ui_from_string(ui, extra_item_menu_xml, -1, NULL);
+        if (fm_file_info_list_get_length(files) == 1)
+        {
+            gtk_action_group_add_actions(act_grp, extra_item_menu_actions,
+                                         G_N_ELEMENTS(extra_item_menu_actions), fv);
+            gtk_ui_manager_add_ui_from_string(ui, extra_item_menu_xml, -1, NULL);
+            if (has_mount)
+            {
+                act = gtk_action_group_get_action(act_grp, "Disable");
+                gtk_action_set_visible(act, FALSE);
+            }
+        }
         /* some menu items should be never available for extra items */
         act = gtk_action_group_get_action(act_grp, "Cut");
         gtk_action_set_visible(act, FALSE);
@@ -3335,8 +3376,14 @@ static gboolean on_button_press(GtkWidget* w, GdkEventButton* evt)
         /* FIXME: do [un]selection on button release */
         if(! (evt->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)))
         {
+            if (clicked_item == NULL)
+            {
+                if (evt->button == 1)
+                    /* SF bug #999: unselect all only on left button */
+                    _unselect_all(FM_FOLDER_VIEW(self));
+            }
             /* don't cancel selection if clicking on selected items */
-            if(!((evt->button == 1 || evt->button == 3) && clicked_item && clicked_item->is_selected))
+            else if (!((evt->button == 1 || evt->button == 3) && clicked_item->is_selected))
                 _unselect_all(FM_FOLDER_VIEW(self));
         }
 
@@ -4848,8 +4895,6 @@ static void fm_desktop_destroy(GtkObject *object)
     }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-    g_object_unref(self->css);
-
     GTK_WIDGET_CLASS(fm_desktop_parent_class)->destroy(object);
 #else
     GTK_OBJECT_CLASS(fm_desktop_parent_class)->destroy(object);
