@@ -1,3 +1,15 @@
+pcmanfm (1.2.5-1) unstable; urgency=medium
+
+  * Fixing spelling error in package description, was Extremly.
+  * Adding shared-mime-info to Depends: every file manager needs MIME database.
+  * Bump Standards-Version to 3.9.8.
+  * Adding polkit-1-auth-agent generic package, removing mate-polkit and
+    lxpolkit.
+  * Merging upstream version 1.2.5 (LP: #1548016).
+  * Using https for VCS fields in debian/control file.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sat, 10 Dec 2016 03:38:05 +0200
+
 pcmanfm (1.2.4-1) unstable; urgency=medium
 
   * Merging upstream version 1.2.4.
