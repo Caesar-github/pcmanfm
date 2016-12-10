@@ -1,3 +1,9 @@
+pcmanfm (1.2.5-2) unstable; urgency=medium
+
+  * Removing override_dh_builddeb target from debian/rules, it fails on 32-bit archs.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sun, 11 Dec 2016 00:54:25 +0200
+
 pcmanfm (1.2.5-1) unstable; urgency=medium
 
   * Fixing spelling error in package description, was Extremly.
