@@ -1,6 +1,14 @@
+pcmanfm (1.2.5-3) unstable; urgency=medium
+
+  * Adding 01-Fix-potential-access-violation.patch from upstream
+    (Closes: #862571).
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sun, 14 May 2017 23:29:20 +0300
+
 pcmanfm (1.2.5-2) unstable; urgency=medium
 
-  * Removing override_dh_builddeb target from debian/rules, it fails on 32-bit archs.
+  * Removing override_dh_builddeb target from debian/rules, it fails on 32-bit
+    archs.
 
  -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sun, 11 Dec 2016 00:54:25 +0200
 
