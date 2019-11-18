@@ -35,6 +35,8 @@
 #include <X11/Xatom.h>
 #include <math.h>
 
+#include <stdlib.h>
+
 #include <cairo-xlib.h>
 
 #include "pref.h"
@@ -2073,6 +2075,10 @@ static void paint_rubber_banding_rect(FmDesktop* self, cairo_t* cr, GdkRectangle
     cairo_set_source_rgba(cr, (gdouble)clr.red/65535, (gdouble)clr.green/65536, (gdouble)clr.blue/65535, (gdouble)alpha/100);
     gdk_cairo_rectangle(cr, &rect);
     cairo_clip (cr);
+
+    // HACK: Outline mode
+    if (!getenv ("PCMANFM_OUTLINE_MODE"))
+
     cairo_paint (cr);
     gdk_cairo_set_source_color(cr, &clr);
     cairo_rectangle (cr, rect.x + 0.5, rect.y + 0.5, rect.width - 1, rect.height - 1);
